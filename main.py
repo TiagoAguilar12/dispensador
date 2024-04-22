@@ -28,6 +28,7 @@ def control_motor(motor_pwm, speed_percent, direction):
 
 
 def main() -> int:
+    GPIO.setwarnings(False)
     control_motor(motor1_pwm, 50, 'forward')
     control_motor(motor2_pwm, 50, 'forward')
 
