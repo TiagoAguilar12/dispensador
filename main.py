@@ -37,3 +37,10 @@ motor1_pwm.stop()
 
 # Limpiar los pines GPIO al finalizar
 GPIO.cleanup()
+
+def main() -> int:
+    print('hola')
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main())  # next section explains the use of sys.exit
