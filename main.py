@@ -27,20 +27,14 @@ def control_motor(motor_pwm, speed_percent, direction):
     motor_pwm.start(speed_percent)
 
 
-
-
-# Esperar un tiempo
-time.sleep(2)
-
-# Detener el motor 1
-motor1_pwm.stop()
-
-# Limpiar los pines GPIO al finalizar
-GPIO.cleanup()
-
 def main() -> int:
     control_motor(motor1_pwm, 50, 'forward')
     control_motor(motor2_pwm, 50, 'forward')
+
+    time.sleep(2)
+    motor1_pwm.stop()
+    motor2_pwm.stop)=
+    GPIO.cleanup()
     return 0
 
 if __name__ == '__main__':
