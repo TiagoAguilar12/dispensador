@@ -26,8 +26,8 @@ def control_motor(motor_pwm, speed_percent, direction):
 
     motor_pwm.start(speed_percent)
 
-# Ejemplo de uso: mover motor 1 hacia adelante al 50% de velocidad
-control_motor(motor1_pwm, 50, 'forward')
+
+
 
 # Esperar un tiempo
 time.sleep(2)
@@ -39,8 +39,6 @@ motor1_pwm.stop()
 GPIO.cleanup()
 
 def main() -> int:
-    print('hola')
+    control_motor(motor1_pwm, 50, 'forward')
+    control_motor(motor2_pwm, 50, 'forward')
     return 0
-
-if __name__ == '__main__':
-    sys.exit(main())  # next section explains the use of sys.exit
