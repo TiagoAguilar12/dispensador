@@ -42,3 +42,7 @@ def main() -> int:
     control_motor(motor1_pwm, 50, 'forward')
     control_motor(motor2_pwm, 50, 'forward')
     return 0
+
+if __name__ == '__main__':
+
+    main()
