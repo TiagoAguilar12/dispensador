@@ -33,7 +33,7 @@ def main() -> int:
 
     time.sleep(2)
     motor1_pwm.stop()
-    motor2_pwm.stop)=
+    motor2_pwm.stop()
     GPIO.cleanup()
     return 0
 
