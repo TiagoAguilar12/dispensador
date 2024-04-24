@@ -24,7 +24,7 @@ def control_motor(motor_pwm, speed_percent, direction):
 
     motor_pwm.start(speed_percent)
 
-def main() -> int:
+def main():
     # Configurar pines de habilitación (enable) de los motores
     pi.write(motor1_en_pin, 1)  # GPIO.HIGH
     pi.write(motor2_en_pin, 1)  # GPIO.HIGH
