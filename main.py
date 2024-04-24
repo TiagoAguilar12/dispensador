@@ -28,11 +28,11 @@ def control_motor(motor_pwm, speed_percent, direction):
 
 
 def main() -> int:
-    print('aca voy')
-    GPIO.setwarnings(False)
+    
+   # GPIO.setwarnings(False)
     control_motor(motor1_pwm, 50, 'forward')
     control_motor(motor2_pwm, 50, 'forward')
-
+    print('aca voy')
     time.sleep(2)
     motor1_pwm.stop()
     motor2_pwm.stop()
