@@ -1,7 +1,6 @@
 import time
 import pigpio
-
-# Configuración de pines
+# Configuración de piness
 motor1_pwm_pin = 12
 motor1_dir_pin = 24
 motor1_en_pin = 22
