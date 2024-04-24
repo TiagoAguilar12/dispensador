@@ -3,13 +3,17 @@ import RPi.GPIO as GPIO
 
 # Configuración de pines
 motor1_pwm_pin = 12
-motor1_dir_pin = 16
-motor2_pwm_pin = 18
-motor2_dir_pin = 22
+motor1_dir_pin = 24
+motor1_en_pin  = 22 
+motor2_pwm_pin = 13
+motor2_dir_pin = 25
+motor2_en_pin  = 23
 
 # Inicialización de la librería GPIO
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup([motor1_pwm_pin, motor1_dir_pin, motor2_pwm_pin, motor2_dir_pin], GPIO.OUT)
+
+
 
 # Definir los objetos PWM para los motores
 motor1_pwm = GPIO.PWM(motor1_pwm_pin, 1000)  # Frecuencia de PWM: 1000 Hz
@@ -29,6 +33,9 @@ def control_motor(motor_pwm, speed_percent, direction):
 
 def main() -> int:
     
+    # Configurar pines de habilitación (enable) de los motores en ALTO
+    GPIO.setup([motor1_en_pin, motor2_en_pin], GPIO.OUT, initial=GPIO.HIGH)
+
    # GPIO.setwarnings(False)
     control_motor(motor1_pwm, 50, 'forward')
     control_motor(motor2_pwm, 50, 'forward')
@@ -37,10 +44,10 @@ def main() -> int:
     motor1_pwm.stop()
     motor2_pwm.stop()
     GPIO.cleanup()
-    print('aca voy siu')
+    print('Movimiento de los motores completado.')
     return 0
 
 if __name__ == '__main__':
-    print('hola')
+    print('Iniciando programa...')
     main()
 #reconexion
