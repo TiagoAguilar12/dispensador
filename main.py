@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 import time
 import pigpio
+
 # Configuración de piness
 motor1_pwm_pin = 12
 motor1_dir_pin = 24
