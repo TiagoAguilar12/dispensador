@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 import time
 import pigpio
 
-# Configuración de piness
+# Configuración de pines
 motor1_pwm_pin = 12
 motor1_dir_pin = 24
 motor1_en_pin = 22
@@ -14,7 +13,10 @@ motor2_en_pin = 23
 pi = pigpio.pi()
 
 # Función para controlar la velocidad y dirección de los motores
-def control_motor(motor_pwm, speed_percent, direction):
+def control_motor(pin_pwm, speed_percent, direction):
+    duty_cycle = int(speed_percent * 255 / 100)  # Convertir el porcentaje de velocidad a ciclo de trabajo (0-255)
+    pi.set_PWM_dutycycle(pin_pwm, duty_cycle)
+
     if direction == 'forward':
         pi.write(motor1_dir_pin, 1)  # GPIO.HIGH
     elif direction == 'backward':
@@ -22,25 +24,23 @@ def control_motor(motor_pwm, speed_percent, direction):
     else:
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
-    motor_pwm.start(speed_percent)
-
 def main():
     # Configurar pines de habilitación (enable) de los motores
     pi.write(motor1_en_pin, 1)  # GPIO.HIGH
     pi.write(motor2_en_pin, 1)  # GPIO.HIGH
 
-    motor1_pwm = pi.set_PWM_frequency(motor1_pwm_pin, 1000)  # Frecuencia de PWM: 1000 Hz
-    motor2_pwm = pi.set_PWM_frequency(motor2_pwm_pin, 1000)
-
-    control_motor(motor1_pwm, 50, 'forward')
-    control_motor(motor2_pwm, 50, 'forward')
+    control_motor(motor1_pwm_pin, 50, 'forward')
+    control_motor(motor2_pwm_pin, 50, 'forward')
 
     time.sleep(2)
-    motor1_pwm.stop()
-    motor2_pwm.stop()
+    pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
+    pi.set_PWM_dutycycle(motor2_pwm_pin, 0)  # Detener motor 2
+
+    pi.write(motor1_en_pin, 0)  # Deshabilitar motor 1
+    pi.write(motor2_en_pin, 0)  # Deshabilitar motor 2
+
     pi.stop()
     print('Movimiento de los motores completado.')
-    return 0
 
 if __name__ == '__main__':
     print('Iniciando programa...')
