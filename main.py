@@ -39,7 +39,7 @@ def main():
     pi.write(motor1_en_pin, 0)  # Deshabilitar motor 1
     pi.write(motor2_en_pin, 0)  # Deshabilitar motor 2
 
-    pi.stop(2)
+    pi.stop()
     print('Movimiento de los motores completado.')
 
 if __name__ == '__main__':
