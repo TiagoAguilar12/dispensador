@@ -26,13 +26,13 @@ def control_motor(pin_pwm, speed_percent, direction):
 
 def main():
     # Configurar pines de habilitación (enable) de los motores
-    pi.write(motor1_en_pin, 1)  # GPIO.HIGH
-    pi.write(motor2_en_pin, 1)  # GPIO.HIGH
+    pi.write(motor1_en_pin, 20)  # GPIO.HIGH
+    pi.write(motor2_en_pin, 20)  # GPIO.HIGH
 
     control_motor(motor1_pwm_pin, 50, 'backward')
     control_motor(motor2_pwm_pin, 50, 'backward')
 
-    time.sleep(5)
+    time.sleep(2)
     pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
     pi.set_PWM_dutycycle(motor2_pwm_pin, 0)  # Detener motor 2
 
