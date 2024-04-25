@@ -29,7 +29,7 @@ def main():
     pi.write(motor1_en_pin, 1)  # GPIO.HIGH
     pi.write(motor2_en_pin, 1)  # GPIO.HIGH
 
-    control_motor(motor1_pwm_pin, 85, 'forward')
+    control_motor(motor1_pwm_pin, 85, 'backward')
     control_motor(motor2_pwm_pin, 50, 'forward')
 
     time.sleep(5)
