@@ -32,7 +32,7 @@ def main():
     control_motor(motor1_pwm_pin, 50, 'forward')
     control_motor(motor2_pwm_pin, 50, 'forward')
 
-    time.sleep(2)
+    time.sleep(10)
     pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
     pi.set_PWM_dutycycle(motor2_pwm_pin, 0)  # Detener motor 2
 
