@@ -30,7 +30,7 @@ def main():
     pi.write(motor2_en_pin, 1)  # GPIO.HIGH
 
     control_motor(motor1_pwm_pin, 80, 'forward')
-    control_motor(motor2_pwm_pin, 10, 'forward')
+    control_motor(motor2_pwm_pin, 20, 'forward')
 
     time.sleep(5)
     pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
