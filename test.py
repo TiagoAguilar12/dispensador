@@ -30,20 +30,6 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
 def read_encoder(encoder_pinA, encoder_pinB):
     return pi.read(encoder_pinA) ^ pi.read(encoder_pinB)
 
-def calculate_rpm(encoder_pinA, encoder_pinB, elapsed_time):
-    start_ticks = read_encoder(encoder_pinA, encoder_pinB)
-    start_time = time.time()
-
-    while time.time() - start_time <= elapsed_time:
-        time.sleep(0.001)  # Esperar un breve tiempo para evitar lecturas demasiado frecuentes
-
-    end_ticks = read_encoder(encoder_pinA, encoder_pinB)
-    delta_ticks = end_ticks - start_ticks
-    ticks_per_rev = 360  # Suponiendo un encoder con 360 pulsos por revolución
-
-    rpm = (delta_ticks * 60) / (ticks_per_rev * elapsed_time)
-    return rpm
-
 def main():
     pi.write(motor1_en_pin, 1)  # Habilitar motor 1
     pi.write(motor2_en_pin, 1)  # Habilitar motor 2
@@ -57,6 +43,10 @@ def main():
         current_line2 = 1
 
         start_time = time.time()
+        start_ticks_motor1 = 0
+        start_ticks_motor2 = 0
+        ticks_per_rev = 64  # Número de flancos para una vuelta completa
+
         while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
             line1 = lines[current_line1].strip()
             line2 = lines[current_line2].strip()
@@ -66,19 +56,22 @@ def main():
             control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
             control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
 
-            print('Leyendo línea {}: {}'.format(current_line1 + 1, line1))  # Mostrar la línea que se está leyendo
+            # Contar flancos de subida y bajada para motor 1
+            current_ticks_motor1 = read_encoder(motor1_enc_pinA, motor1_enc_pinB)
+            ticks_diff_motor1 = current_ticks_motor1 - start_ticks_motor1
+            if ticks_diff_motor1 >= ticks_per_rev:
+                start_ticks_motor1 = current_ticks_motor1
+                print("Motor 1: Vuelta completada")
+
+            # Contar flancos de subida y bajada para motor 2
+            current_ticks_motor2 = read_encoder(motor2_enc_pinA, motor2_enc_pinB)
+            ticks_diff_motor2 = current_ticks_motor2 - start_ticks_motor2
+            if ticks_diff_motor2 >= ticks_per_rev:
+                start_ticks_motor2 = current_ticks_motor2
+                print("Motor 2: Vuelta completada")
 
             current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
             current_line2 = (current_line2 + 1) % total_lines  # Avanzar al siguiente valor circularmente
-
-            # Calcular RPM para cada motor
-            motor1_rpm = calculate_rpm(motor1_enc_pinA, motor1_enc_pinB, 0.5)
-            motor2_rpm = calculate_rpm(motor2_enc_pinA, motor2_enc_pinB, 0.5)
-
-            print('Velocidad motor 1:', motor1_speed)
-            print('RPM motor 1:', motor1_rpm)
-            print('Velocidad motor 2:', motor2_speed)
-            print('RPM motor 2:', motor2_rpm)
 
             time.sleep(0.5)  # Esperar 0.5 segundos antes de leer la siguiente línea
 
