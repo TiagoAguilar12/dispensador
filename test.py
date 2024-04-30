@@ -14,6 +14,8 @@ pinB = 18
 pi = pigpio.pi()
 pi.set_mode(pinA, pigpio.INPUT)
 
+global rpm_count  # Declarar rpm_count como global
+
 rpm_count = 0
 rpm = 0
 last_state = pi.read(pinA)
@@ -44,6 +46,8 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
 def main():
+    global rpm_count  # Declarar rpm_count como global dentro de main
+
     # Configurar pines de habilitación (enable) de los motores
     pi.write(motor1_en_pin, 1)  # GPIO.HIGH
     pi.write(motor2_en_pin, 1)  # GPIO.HIGH
