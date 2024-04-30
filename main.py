@@ -39,7 +39,7 @@ def main():
         while time.time() - start_time <= 10:  # Ejemplo: Ejecutar durante 60 segundos
             line1 = lines[current_line1].strip()
             line2 = lines[current_line2].strip()
-            motor1_speed = int(line2)
+            motor1_speed = int(line1)
             motor2_speed = int(line2)
 
             control_motor(motor1_pwm_pin, motor1_speed, 'forward')
