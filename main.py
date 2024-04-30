@@ -49,6 +49,8 @@ def main():
 
             current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
             current_line2 = (current_line2 + 1) % total_lines  # Avanzar al siguiente valor circularmente
+            print('Velocidad motor 1:', motor1_speed)
+            print('Velocidad motor 2:', motor2_speed)
             time.sleep(5)  # Esperar 0.5 segundos antes de leer la siguiente línea
 
         pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
