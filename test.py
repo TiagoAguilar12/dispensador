@@ -14,22 +14,22 @@ pinB = 18
 pi = pigpio.pi()
 pi.set_mode(pinA, pigpio.INPUT)
 
-global rpm_count  # Declarar rpm_count como global
+global start_tick, last_tick, rpm  # Declarar variables globales para los ticks y la RPM
 
-rpm_count = 0
+start_tick = 0
+last_tick = 0
 rpm = 0
-last_state = pi.read(pinA)
 
 # Función para contar las RPM
 def count_rpm(gpio, level, tick):
-    global rpm_count
-    global last_state
+    global start_tick, last_tick, rpm
 
-    state = pi.read(pinA)
-    if state != last_state:
-        rpm_count += 1
-
-    last_state = state
+    if start_tick == 0:
+        start_tick = tick
+    else:
+        last_tick = tick
+        rpm = (1000000.0 / (last_tick - start_tick)) * 60.0 / 16.0  # Calcular RPM
+        start_tick = last_tick
 
 cb = pi.callback(pinA, pigpio.RISING_EDGE, count_rpm)
 
@@ -46,7 +46,7 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
 def main():
-    global rpm_count  # Declarar rpm_count como global dentro de main
+    global rpm  # Declarar rpm como global dentro de main
 
     # Configurar pines de habilitación (enable) de los motores
     pi.write(motor1_en_pin, 1)  # GPIO.HIGH
@@ -56,18 +56,10 @@ def main():
     control_motor(motor2_pwm_pin, motor2_dir_pin, 100, 'forward')
     start_time = time.time()
         
-    while time.time() - start_time <= 5:  # Ejemplo: Ejecutar durante 20 segundos
-            start_time1 = time.time()
-            time.sleep(1)  # Esperar 1 segundo
-            end_time = time.time()
+    while time.time() - start_time <= 5:  # Ejemplo: Ejecutar durante 5 segundos
+        time.sleep(1)  # Esperar 1 segundo
+        print("RPM: {:.2f}".format(rpm))
 
-            time_elapsed = end_time - start_time1
-            rpm = (rpm_count / 16) * (60 / time_elapsed)  # RPM = (Pulsos / Pulsos por revolución) * (60 segundos / Tiempo)
- # Calcular las RPM
-            print("RPM: {:.2f}".format(rpm))
-
-            rpm_count = 0
-          
     cb.cancel()
     time.sleep(5)
     pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
@@ -78,6 +70,5 @@ def main():
 
     pi.stop()
     print('Movimiento de los motores completado.')
-
 
 main()
