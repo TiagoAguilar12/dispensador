@@ -32,13 +32,15 @@ def main():
     with open(file_path, 'r') as file:
         lines = file.readlines()
         total_lines = len(lines)
-        current_line = 0
+        current_line1 = 1
+        current_line2 = 2
 
         start_time = time.time()
         while time.time() - start_time <= 10:  # Ejemplo: Ejecutar durante 60 segundos
-            line = lines[current_line].strip()
-            motor1_speed = int(line)
-            motor2_speed = int(line)
+            line1 = lines[current_line1].strip()
+            line2 = lines[current_line2].strip()
+            motor1_speed = int(line2)
+            motor2_speed = int(line2)
 
             control_motor(motor1_pwm_pin, motor1_speed, 'forward')
             control_motor(motor2_pwm_pin, motor2_speed, 'forward')
