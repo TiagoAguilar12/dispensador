@@ -39,9 +39,9 @@ def main():
             line2 = lines[current_line2].strip()
             motor1_speed = int(line1)
             motor2_speed = int(line2)
-            control_motor(motor1_pwm_pin, motor1_speed, 'forward')
-            control_motor(motor2_pwm_pin, motor2_speed, 'forward')
-            
+            control_motor(motor1_pwm_pin, 80, 'forward')
+            control_motor(motor2_pwm_pin, 40, 'forward')
+
             print('Leyendo línea {}: {}'.format(current_line1 + 1, line1))  # Mostrar la línea que se está leyendo
 
             current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
