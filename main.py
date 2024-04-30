@@ -33,19 +33,17 @@ def main():
         total_lines = len(lines)
         current_line1 = 0
         current_line2 = 1
-        motor2_speedd = 0
-        motor1_speedd = 0
+       
         start_time = time.time()
         while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 60 segundos
             line1 = lines[current_line1].strip()
             line2 = lines[current_line2].strip()
-            motor1_speed = int(line1) + motor1_speedd
-            motor2_speed = int(line2) + motor2_speedd
+            motor1_speed = int(line1) 
+            motor2_speed = int(line2) 
 
             control_motor(motor1_pwm_pin, motor1_speed, 'forward')
             control_motor(motor2_pwm_pin, motor2_speed, 'forward')
-            motor1_speedd = motor1_speed *0
-            motor2_speedd = motor2_speed *0
+            
 
             print('Leyendo línea {}: {}'.format(current_line1 + 1, line1))  # Mostrar la línea que se está leyendo
 
