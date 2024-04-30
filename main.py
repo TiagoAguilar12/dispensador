@@ -9,6 +9,7 @@ motor2_pwm_pin = 13
 motor2_dir_pin = 25
 motor2_en_pin = 23
 
+
 pi = pigpio.pi()
 
 def control_motor(pin_pwm, pin_dir, speed_percent, direction):
