@@ -39,8 +39,8 @@ def main():
             line2 = lines[current_line2].strip()
             motor1_speed = int(line1)
             motor2_speed = int(line2)
-            control_motor(motor1_pwm_pin, 10, 'forward')
-            control_motor(motor2_pwm_pin, 10, 'forward')
+            control_motor(motor1_pwm_pin, motor1_speed, 'forward')
+            control_motor(motor2_pwm_pin, motor2_speed, 'forward')
 
             print('Leyendo línea {}: {}'.format(current_line1 + 1, line1))  # Mostrar la línea que se está leyendo
 
@@ -50,7 +50,7 @@ def main():
             print('Velocidad motor 1:', motor1_speed)
             print('Velocidad motor 2:', motor2_speed)
 
-            time.sleep(5)  # Esperar 0.5 segundos antes de leer la siguiente línea
+            time.sleep(2)  # Esperar 0.5 segundos antes de leer la siguiente línea
 
         pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
         pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
