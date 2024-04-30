@@ -34,27 +34,17 @@ def main():
     pi.write(motor1_en_pin, 1)  # Habilitar motor 1
     pi.write(motor2_en_pin, 1)  # Habilitar motor 2
 
-    file_path = '/home/santiago/Documents/dispensador/dispensador/Pbrs.txt'
 
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        total_lines = len(lines)
-        current_line1 = 0
-        current_line2 = 1
+    start_time = time.time()
+    start_ticks_motor1 = 0
+    start_ticks_motor2 = 0
+    ticks_per_rev = 64  # Número de flancos para una vuelta completa
 
-        start_time = time.time()
-        start_ticks_motor1 = 0
-        start_ticks_motor2 = 0
-        ticks_per_rev = 64  # Número de flancos para una vuelta completa
+    while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
+            
 
-        while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
-            line1 = lines[current_line1].strip()
-            line2 = lines[current_line2].strip()
-            motor1_speed = int(line1)
-            motor2_speed = int(line2)
-
-            control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
-            control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
+            control_motor(motor1_pwm_pin, 100,  'forward')
+            control_motor(motor2_pwm_pin, 100,  'forward')
 
             # Contar flancos de subida y bajada para motor 1
             current_ticks_motor1 = read_encoder(motor1_enc_pinA, motor1_enc_pinB)
@@ -70,18 +60,17 @@ def main():
                 start_ticks_motor2 = current_ticks_motor2
                 print("Motor 2: Vuelta completada")
 
-            current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
-            current_line2 = (current_line2 + 1) % total_lines  # Avanzar al siguiente valor circularmente
+          
 
-            time.sleep(0.5)  # Esperar 0.5 segundos antes de leer la siguiente línea
+            
 
-        pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
-        pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
+    pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
+    pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
 
-        pi.write(motor1_en_pin, 0)  # Deshabilitar motor 1
-        pi.write(motor2_en_pin, 0)  # Deshabilitar motor 2
+    pi.write(motor1_en_pin, 0)  # Deshabilitar motor 1
+    pi.write(motor2_en_pin, 0)  # Deshabilitar motor 2
 
-        pi.stop()
-        print('Tiempo de funcionamiento de los motores completado.')
+    pi.stop()
+    print('Tiempo de funcionamiento de los motores completado.')
 
 main()
