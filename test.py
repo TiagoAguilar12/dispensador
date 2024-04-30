@@ -5,22 +5,37 @@ import pigpio
 motor1_pwm_pin = 12
 motor1_dir_pin = 24
 motor1_en_pin = 22
-
-pinA_motor1 = 17  # Pin A del encoder del motor 1
+motor2_pwm_pin = 13
+motor2_dir_pin = 25
+motor2_en_pin = 23
+pinA = 17
+pinB = 18
 
 pi = pigpio.pi()
-pi.set_mode(pinA_motor1, pigpio.INPUT)
+pi.set_mode(pinA, pigpio.INPUT)
 
-rpm_count_motor1 = 0  # Variable global para contar las RPM del motor 1
+global rpm_count  # Declarar rpm_count como global
 
+rpm_count = 0
+rpm = 0
+last_state = pi.read(pinA)
+
+# Función para contar las RPM
 def count_rpm(gpio, level, tick):
-    global rpm_count_motor1
-    rpm_count_motor1 += 1
+    global rpm_count
+    global last_state
 
-cb_motor1 = pi.callback(pinA_motor1, pigpio.RISING_EDGE, count_rpm)
+    state = pi.read(pinA)
+    if state != last_state:
+        rpm_count += 1
 
+    last_state = state
+
+cb = pi.callback(pinA, pigpio.RISING_EDGE, count_rpm)
+
+# Función para controlar la velocidad y dirección de los motores
 def control_motor(pin_pwm, pin_dir, speed_percent, direction):
-    duty_cycle = int(speed_percent * 255 / 100)
+    duty_cycle = int(speed_percent * 255 / 100)  # Convertir el porcentaje de velocidad a ciclo de trabajo (0-255)
     pi.set_PWM_dutycycle(pin_pwm, duty_cycle)
 
     if direction == 'forward':
@@ -31,43 +46,36 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
 def main():
-    global rpm_count_motor1
-    rpm_count_motor1 = 0  # Reiniciar el contador de RPM del motor 1
+    global rpm_count  # Declarar rpm_count como global dentro de main
 
-    pi.write(motor1_en_pin, 1)  # Habilitar motor 1
+    # Configurar pines de habilitación (enable) de los motores
+    pi.write(motor1_en_pin, 1)  # GPIO.HIGH
+    pi.write(motor2_en_pin, 1)  # GPIO.HIGH
 
-    file_path = '/home/santiago/Documents/dispensador/dispensador/Pbrs.txt'
+    control_motor(motor1_pwm_pin, motor1_dir_pin, 100, 'forward')
+    control_motor(motor2_pwm_pin, motor2_dir_pin, 100, 'forward')
 
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        total_lines = len(lines)
-        current_line1 = 0
+    try:
+        while True:
+            start_time = time.time()
+            time.sleep(1)  # Esperar 1 segundo
+            end_time = time.time()
 
-        start_time = time.time()
-        while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
-            line1 = lines[current_line1].strip()
-            motor1_speed = int(line1) 
+            time_elapsed = end_time - start_time
+            rpm = (rpm_count / 16) / time_elapsed  # Calcular las RPM
+            print("RPM: {:.2f}".format(rpm))
 
-            control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
+            rpm_count = 0
+    except KeyboardInterrupt:
+        cb.cancel()
+        time.sleep(5)
+        pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
+        pi.set_PWM_dutycycle(motor2_pwm_pin, 0)  # Detener motor 2
 
-            print('Leyendo línea {}: {}'.format(current_line1 + 1, line1))  # Mostrar la línea que se está leyendo
-            print('Velocidad motor 1:', motor1_speed)
-
-            # Esperar 1 segundo antes de leer las RPM
-            time.sleep(0.5)
-
-            print('RPM motor 1:', rpm_count_motor1)
-
-            rpm_count_motor1 = 0  # Reiniciar el contador de RPM para la próxima lectura
-
-            current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
-
-        pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
         pi.write(motor1_en_pin, 0)  # Deshabilitar motor 1
-
-        cb_motor1.cancel()  # Cancelar la callback del encoder del motor 1
+        pi.write(motor2_en_pin, 0)  # Deshabilitar motor 2
 
         pi.stop()
-        print('Tiempo de funcionamiento del motor 1 completado.')
+        print('Movimiento de los motores completado.')
 
 main()
