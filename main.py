@@ -45,7 +45,7 @@ def main():
             control_motor(motor1_pwm_pin, motor1_speed, 'forward')
             control_motor(motor2_pwm_pin, motor2_speed, 'forward')
 
-            print(f'Leyendo línea {current_line1 + 1}: {line1}')  # Mostrar la línea que se está leyendo
+            print('Leyendo línea {}: {}'.format(current_line1 + 1, line1))  # Mostrar la línea que se está leyendo
 
             current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
             current_line2 = (current_line2 + 1) % total_lines  # Avanzar al siguiente valor circularmente
