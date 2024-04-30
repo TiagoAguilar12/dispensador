@@ -1,5 +1,4 @@
 # -- coding: utf-8 --
-import os
 import time
 import pigpio
 
@@ -34,13 +33,14 @@ def main():
         total_lines = len(lines)
         current_line1 = 0
         current_line2 = 1
-
+        line1 = lines[current_line1].strip()
+        line2 = lines[current_line2].strip()
+        motor1_speed = int(line1)
+        motor2_speed = int(line2)
         start_time = time.time()
+        
         while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 60 segundos
-            line1 = lines[current_line1].strip()
-            line2 = lines[current_line2].strip()
-            motor1_speed = int(line1)
-            motor2_speed = int(line2)
+            
 
             control_motor(motor1_pwm_pin, motor1_speed, 'forward')
             control_motor(motor2_pwm_pin, motor2_speed, 'forward')
