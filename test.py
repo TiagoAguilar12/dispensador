@@ -55,9 +55,8 @@ def main():
     control_motor(motor1_pwm_pin, motor1_dir_pin, 100, 'forward')
     control_motor(motor2_pwm_pin, motor2_dir_pin, 100, 'forward')
     start_time = time.time()
-    try:
         
-        while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
+    while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
             start_time1 = time.time()
             time.sleep(1)  # Esperar 1 segundo
             end_time = time.time()
@@ -67,17 +66,17 @@ def main():
             print("RPM: {:.2f}".format(rpm))
 
             rpm_count = 0
-    except KeyboardInterrupt:
-        cb.cancel()
-        time.sleep(5)
-        pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
-        pi.set_PWM_dutycycle(motor2_pwm_pin, 0)  # Detener motor 2
+          
+    cb.cancel()
+    time.sleep(5)
+    pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
+    pi.set_PWM_dutycycle(motor2_pwm_pin, 0)  # Detener motor 2
 
-        pi.write(motor1_en_pin, 0)  # Deshabilitar motor 1
-        pi.write(motor2_en_pin, 0)  # Deshabilitar motor 2
+    pi.write(motor1_en_pin, 0)  # Deshabilitar motor 1
+    pi.write(motor2_en_pin, 0)  # Deshabilitar motor 2
 
-        pi.stop()
-        print('Movimiento de los motores completado.')
+    pi.stop()
+    print('Movimiento de los motores completado.')
 
 
 main()
