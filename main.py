@@ -42,6 +42,4 @@ def main():
     pi.stop()
     print('Movimiento de los motores completado.')
 
-if __name__ =='main':
-    print('ayudame')
-    main()
+main()  # Eliminamos la condición if __name__ == '__main__': y llamamos directamente a main()
