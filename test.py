@@ -1,40 +1,23 @@
 # -- coding: utf-8 --
-
 import time
 import pigpio
 
 motor1_pwm_pin = 12
 motor1_dir_pin = 24
 motor1_en_pin = 22
+motor1_enc_pinA = 17  # Pin del encoder para el motor 1
+motor1_enc_pinB = 18  # Pin del encoder para el motor 1
+
 motor2_pwm_pin = 13
 motor2_dir_pin = 25
 motor2_en_pin = 23
-pinA = 17  # Pin del encoder, modifícalo según tu configuración
-pinB = 18  # Si utilizas otro pin del encoder, modifícalo aquí
+motor2_enc_pinA = 19  # Pin del encoder para el motor 2
+motor2_enc_pinB = 20  # Pin del encoder para el motor 2
 
 pi = pigpio.pi()
-pi.set_mode(pinA, pigpio.INPUT)
 
-global rpm_count  # Declarar rpm_count como global
-
-rpm_count = 0
-last_state = pi.read(pinA)
-
-# Función para contar las RPM
-def count_rpm(gpio, level, tick):
-    global rpm_count, last_state
-
-    state = pi.read(pinA)
-    if state != last_state:
-        rpm_count += 1
-
-    last_state = state
-
-cb = pi.callback(pinA, pigpio.RISING_EDGE, count_rpm)
-
-# Función para controlar la velocidad y dirección de los motores
 def control_motor(pin_pwm, pin_dir, speed_percent, direction):
-    duty_cycle = int(speed_percent * 255 / 100)  # Convertir el porcentaje de velocidad a ciclo de trabajo (0-255)
+    duty_cycle = int(speed_percent * 255 / 100)
     pi.set_PWM_dutycycle(pin_pwm, duty_cycle)
 
     if direction == 'forward':
@@ -44,9 +27,19 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
     else:
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
-def main():
-    global rpm_count  # Declarar rpm_count como global dentro de main
+def read_encoder(encoder_pinA, encoder_pinB):
+    return pi.read(encoder_pinA) ^ pi.read(encoder_pinB)
 
+def calculate_rpm(encoder_pinA, encoder_pinB, start_time, elapsed_time):
+    ticks = 0
+    while time.time() - start_time <= elapsed_time:
+        if read_encoder(encoder_pinA, encoder_pinB):
+            ticks += 1
+        time.sleep(0.001)  # Esperar un breve tiempo para evitar lecturas demasiado frecuentes
+    rpm = (ticks * 60) / (elapsed_time * 360)  # Calcular RPM basado en el número de ticks y el tiempo transcurrido
+    return rpm
+
+def main():
     pi.write(motor1_en_pin, 1)  # Habilitar motor 1
     pi.write(motor2_en_pin, 1)  # Habilitar motor 2
 
@@ -59,7 +52,7 @@ def main():
         current_line2 = 1
 
         start_time = time.time()
-        while time.time() - start_time <= 10:  # Ejemplo: Ejecutar durante 20 segundos
+        while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
             line1 = lines[current_line1].strip()
             line2 = lines[current_line2].strip()
             motor1_speed = int(line1)
@@ -72,16 +65,17 @@ def main():
 
             current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
             current_line2 = (current_line2 + 1) % total_lines  # Avanzar al siguiente valor circularmente
+
+            # Calcular RPM para cada motor
+            motor1_rpm = calculate_rpm(motor1_enc_pinA, motor1_enc_pinB, start_time, 0.5)
+            motor2_rpm = calculate_rpm(motor2_enc_pinA, motor2_enc_pinB, start_time, 0.5)
+            
             print('Velocidad motor 1:', motor1_speed)
+            print('RPM motor 1:', motor1_rpm)
             print('Velocidad motor 2:', motor2_speed)
+            print('RPM motor 2:', motor2_rpm)
 
-            # Calcular las RPM y mostrarlas
-            rpm = (rpm_count * 60) / 19  # Fórmula para calcular las RPM basado en el contador de pulsos
-            print("RPM: {:.2f}".format(rpm))
-
-            rpm_count = 0  # Reiniciar el contador de pulsos después de calcular las RPM
-
-            time.sleep(1)  # Esperar 0.5 segundos antes de leer la siguiente línea
+            time.sleep(0.5)  # Esperar 0.5 segundos antes de leer la siguiente línea
 
         pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
         pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
