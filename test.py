@@ -43,6 +43,7 @@ def count_rpm(gpio, level, tick):
     if total_flancos >= flancos_por_rev:
         rpm_count_up = 0
         rpm_count_down = 0
+        global gearbox_count  # Indicar que se usará la variable global
         gearbox_count += 1
         print("Caja reductora contador:", gearbox_count)
 
@@ -50,11 +51,13 @@ cb_A = pi.callback(pinA, pigpio.EITHER_EDGE, count_rpm)
 cb_B = pi.callback(pinB, pigpio.EITHER_EDGE, count_rpm)
 
 def main():
+    global gearbox_count  # Indicar que se usará la variable global
+
     pi.write(motor1_en_pin, 1)
     pi.write(motor2_en_pin, 1)
 
-    control_motor(motor1_pwm_pin, 100, 'forward')
-    control_motor(motor2_pwm_pin, 100, 'forward')
+    control_motor(motor1_pwm_pin, 50, 'forward')
+    control_motor(motor2_pwm_pin, 50, 'forward')
 
     try:
         while True:
