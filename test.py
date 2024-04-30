@@ -5,72 +5,81 @@ import pigpio
 motor1_pwm_pin = 12
 motor1_dir_pin = 24
 motor1_en_pin = 22
-motor1_enc_pinA = 17  # Pin del encoder para el motor 1
-motor1_enc_pinB = 18  # Pin del encoder para el motor 1
-
 motor2_pwm_pin = 13
 motor2_dir_pin = 25
 motor2_en_pin = 23
-motor2_enc_pinA = 19  # Pin del encoder para el motor 2
-motor2_enc_pinB = 20  # Pin del encoder para el motor 2
+pinA = 17
+pinB = 18
 
 pi = pigpio.pi()
+pi.set_mode(pinA, pigpio.INPUT)
+pi.set_mode(pinB, pigpio.INPUT)
 
-def control_motor(pin_pwm, pin_dir, speed_percent, direction):
+rpm_count_up = 0
+rpm_count_down = 0
+gearbox_count = 0
+flancos_por_rev = 64  # Suma de flancos de subida y bajada para una revolución completa
+
+def control_motor(pin_pwm, speed_percent, direction):
     duty_cycle = int(speed_percent * 255 / 100)
     pi.set_PWM_dutycycle(pin_pwm, duty_cycle)
 
     if direction == 'forward':
-        pi.write(pin_dir, 1)  # Establecer dirección hacia adelante
+        pi.write(motor1_dir_pin, 1)
     elif direction == 'backward':
-        pi.write(pin_dir, 0)  # Establecer dirección hacia atrás
+        pi.write(motor1_dir_pin, 0)
     else:
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
-def read_encoder(encoder_pinA, encoder_pinB):
-    return pi.read(encoder_pinA) ^ pi.read(encoder_pinB)
+def count_rpm(gpio, level, tick):
+    global rpm_count_up, rpm_count_down, gearbox_count
+
+    if gpio == pinA:
+        rpm_count_up += 1
+    elif gpio == pinB:
+        rpm_count_down += 1
+
+    total_flancos = rpm_count_up + rpm_count_down
+    if total_flancos >= flancos_por_rev:
+        rpm_count_up = 0
+        rpm_count_down = 0
+        gearbox_count += 1
+        print("Caja reductora contador:", gearbox_count)
+
+cb_A = pi.callback(pinA, pigpio.EITHER_EDGE, count_rpm)
+cb_B = pi.callback(pinB, pigpio.EITHER_EDGE, count_rpm)
 
 def main():
-    pi.write(motor1_en_pin, 1)  # Habilitar motor 1
-    pi.write(motor2_en_pin, 1)  # Habilitar motor 2
+    pi.write(motor1_en_pin, 1)
+    pi.write(motor2_en_pin, 1)
 
+    control_motor(motor1_pwm_pin, 100, 'forward')
+    control_motor(motor2_pwm_pin, 100, 'forward')
 
-    start_time = time.time()
-    start_ticks_motor1 = 0
-    start_ticks_motor2 = 0
-    ticks_per_rev = 64  # Número de flancos para una vuelta completa
+    try:
+        while True:
+            start_time = time.time()
+            time.sleep(1)
+            end_time = time.time()
 
-    while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
-            
+            time_elapsed = end_time - start_time
+            rpm = (gearbox_count / 19) / time_elapsed  # Calcular las RPM para una relación de 19:1
+            print("RPM: {:.2f}".format(rpm))
 
-            control_motor(motor1_pwm_pin, 100,  'forward')
-            control_motor(motor2_pwm_pin, 100,  'forward')
+            gearbox_count = 0
+    except KeyboardInterrupt:
+        cb_A.cancel()
+        cb_B.cancel()
+        time.sleep(5)
+        pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
+        pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
 
-            # Contar flancos de subida y bajada para motor 1
-            current_ticks_motor1 = read_encoder(motor1_enc_pinA, motor1_enc_pinB)
-            ticks_diff_motor1 = current_ticks_motor1 - start_ticks_motor1
-            if ticks_diff_motor1 >= ticks_per_rev:
-                start_ticks_motor1 = current_ticks_motor1
-                print("Motor 1: Vuelta completada")
+        pi.write(motor1_en_pin, 0)
+        pi.write(motor2_en_pin, 0)
 
-            # Contar flancos de subida y bajada para motor 2
-            current_ticks_motor2 = read_encoder(motor2_enc_pinA, motor2_enc_pinB)
-            ticks_diff_motor2 = current_ticks_motor2 - start_ticks_motor2
-            if ticks_diff_motor2 >= ticks_per_rev:
-                start_ticks_motor2 = current_ticks_motor2
-                print("Motor 2: Vuelta completada")
+        pi.stop()
+        print('Movimiento de los motores completado.')
 
-          
-
-            
-
-    pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
-    pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
-
-    pi.write(motor1_en_pin, 0)  # Deshabilitar motor 1
-    pi.write(motor2_en_pin, 0)  # Deshabilitar motor 2
-
-    pi.stop()
-    print('Tiempo de funcionamiento de los motores completado.')
-
-main()
+if __name__ == '__main__':
+    print('Iniciando programa...')
+    main()
