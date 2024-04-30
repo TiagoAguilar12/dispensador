@@ -33,7 +33,7 @@ def main():
         lines = file.readlines()
         total_lines = len(lines)
         current_line1 = 1
-        current_line2 = 2
+        current_line2 = 1
 
         start_time = time.time()
         while time.time() - start_time <= 10:  # Ejemplo: Ejecutar durante 60 segundos
@@ -45,10 +45,10 @@ def main():
             control_motor(motor1_pwm_pin, motor1_speed, 'forward')
             control_motor(motor2_pwm_pin, motor2_speed, 'forward')
 
+            print(f'Leyendo línea {current_line1 + 1}: {line1}')  # Mostrar la línea que se está leyendo
+
             current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
             current_line2 = (current_line2 + 1) % total_lines  # Avanzar al siguiente valor circularmente
-
-            time.sleep(0.5)  # Esperar 0.5 segundos antes de leer la siguiente línea
 
         pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
         pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
