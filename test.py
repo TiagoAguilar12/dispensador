@@ -62,8 +62,8 @@ def main():
     pi.write(motor1_en_pin, 1)  # GPIO.HIGH
     pi.write(motor2_en_pin, 1)  # GPIO.HIGH
 
-    control_motor(motor1_pwm_pin, motor1_dir_pin, 150, 'forward')
-    control_motor(motor2_pwm_pin, motor2_dir_pin, 150, 'forward')
+    control_motor(motor1_pwm_pin, motor1_dir_pin, 50, 'forward')
+    control_motor(motor2_pwm_pin, motor2_dir_pin, 50, 'forward')
     start_time=time.time()
 
     while time.time()-start_time<= 20:  # Ejemplo: Ejecutar durante 20 segundos
