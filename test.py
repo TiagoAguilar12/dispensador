@@ -30,13 +30,18 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
 def read_encoder(encoder_pinA, encoder_pinB):
     return pi.read(encoder_pinA) ^ pi.read(encoder_pinB)
 
-def calculate_rpm(encoder_pinA, encoder_pinB, start_time, elapsed_time):
-    ticks = 0
+def calculate_rpm(encoder_pinA, encoder_pinB, elapsed_time):
+    start_ticks = read_encoder(encoder_pinA, encoder_pinB)
+    start_time = time.time()
+
     while time.time() - start_time <= elapsed_time:
-        if read_encoder(encoder_pinA, encoder_pinB):
-            ticks += 1
         time.sleep(0.001)  # Esperar un breve tiempo para evitar lecturas demasiado frecuentes
-    rpm = (ticks * 60) / (elapsed_time * 360)  # Calcular RPM basado en el número de ticks y el tiempo transcurrido
+
+    end_ticks = read_encoder(encoder_pinA, encoder_pinB)
+    delta_ticks = end_ticks - start_ticks
+    ticks_per_rev = 360  # Suponiendo un encoder con 360 pulsos por revolución
+
+    rpm = (delta_ticks * 60) / (ticks_per_rev * elapsed_time)
     return rpm
 
 def main():
@@ -67,9 +72,9 @@ def main():
             current_line2 = (current_line2 + 1) % total_lines  # Avanzar al siguiente valor circularmente
 
             # Calcular RPM para cada motor
-            motor1_rpm = calculate_rpm(motor1_enc_pinA, motor1_enc_pinB, start_time, 0.5)
-            motor2_rpm = calculate_rpm(motor2_enc_pinA, motor2_enc_pinB, start_time, 0.5)
-            
+            motor1_rpm = calculate_rpm(motor1_enc_pinA, motor1_enc_pinB, 0.5)
+            motor2_rpm = calculate_rpm(motor2_enc_pinA, motor2_enc_pinB, 0.5)
+
             print('Velocidad motor 1:', motor1_speed)
             print('RPM motor 1:', motor1_rpm)
             print('Velocidad motor 2:', motor2_speed)
