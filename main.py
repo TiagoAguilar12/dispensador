@@ -42,6 +42,7 @@ def main():
     pi.stop()
     print('Movimiento de los motores completado.')
 
-if _name_ == '_main_':
+if __name__== '_main_':
+
     print('Iniciando programa...')
     main()
