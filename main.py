@@ -42,14 +42,14 @@ def main():
             motor1_speed = int(line1)
             motor2_speed = int(line2)
 
-            control_motor(motor1_pwm_pin, 100, 'forward')
-            control_motor(motor2_pwm_pin, 50, 'forward')
+            control_motor(motor1_pwm_pin, motor1_speed, 'forward')
+            control_motor(motor2_pwm_pin, motor2_speed, 'forward')
 
             print('Leyendo línea {}: {}'.format(current_line1 + 1, line1))  # Mostrar la línea que se está leyendo
 
             current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
             current_line2 = (current_line2 + 1) % total_lines  # Avanzar al siguiente valor circularmente
-            print('Velocidad motor 1:', motor1_speed , 'tipo de dato:', type(motor1_speed))
+            print('Velocidad motor 1:', motor1_speed)
             print('Velocidad motor 2:', motor2_speed)
             time.sleep(5)  # Esperar 0.5 segundos antes de leer la siguiente línea
 
