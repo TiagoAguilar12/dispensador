@@ -56,7 +56,7 @@ def main():
     control_motor(motor2_pwm_pin, motor2_dir_pin, 100, 'forward')
 
     try:
-        while True:
+        while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
             start_time = time.time()
             time.sleep(1)  # Esperar 1 segundo
             end_time = time.time()
