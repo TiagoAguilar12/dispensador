@@ -54,14 +54,15 @@ def main():
 
     control_motor(motor1_pwm_pin, motor1_dir_pin, 100, 'forward')
     control_motor(motor2_pwm_pin, motor2_dir_pin, 100, 'forward')
-
+    start_time = time.time()
     try:
+        
         while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
-            start_time = time.time()
+            start_time1 = time.time()
             time.sleep(1)  # Esperar 1 segundo
             end_time = time.time()
 
-            time_elapsed = end_time - start_time
+            time_elapsed = end_time - start_time1
             rpm = ((rpm_count*64) / 16) / time_elapsed  # Calcular las RPM
             print("RPM: {:.2f}".format(rpm))
 
@@ -77,5 +78,6 @@ def main():
 
         pi.stop()
         print('Movimiento de los motores completado.')
+
 
 main()
