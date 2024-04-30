@@ -1,4 +1,4 @@
-# -- coding: utf-8 --
+import os
 import time
 import pigpio
 
@@ -26,13 +26,15 @@ def main():
     pi.write(motor1_en_pin, 1)  # GPIO.HIGH
     pi.write(motor2_en_pin, 1)  # GPIO.HIGH
 
-    with open('Prbs.txt', 'r') as file:
+    file_path = '/home/santiago/Documents/dispensador/dispensador/Pbrs.txt'
+
+    with open(file_path, 'r') as file:
         lines = file.readlines()
         total_lines = len(lines)
         current_line = 0
 
         start_time = time.time()
-        while time.time() - start_time <= 10:  # Ejemplo: Ejecutar durante 10 segundos
+        while time.time() - start_time <= 10:  # Ejemplo: Ejecutar durante 60 segundos
             line = lines[current_line].strip()
             motor1_speed = int(line)
             motor2_speed = int(line)
