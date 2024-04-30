@@ -32,7 +32,7 @@ def main():
     with open(file_path, 'r') as file:
         lines = file.readlines()
         total_lines = len(lines)
-        current_line1 = 1
+        current_line1 = 0
         current_line2 = 1
 
         start_time = time.time()
