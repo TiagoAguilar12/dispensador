@@ -43,6 +43,8 @@ def main():
 
             control_motor(motor1_pwm_pin, motor1_speed, 'forward')
             control_motor(motor2_pwm_pin, motor2_speed, 'forward')
+            motor1_speed = 0
+            motor2_speed = 0
 
             print('Leyendo línea {}: {}'.format(current_line1 + 1, line1))  # Mostrar la línea que se está leyendo
 
