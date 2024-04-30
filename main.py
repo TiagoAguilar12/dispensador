@@ -42,3 +42,6 @@ def main():
     pi.stop()
     print('Movimiento de los motores completado.')
 
+if __name__ =='main':
+    print('ayudame')
+    main()
