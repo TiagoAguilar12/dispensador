@@ -54,7 +54,7 @@ def main():
             print('Velocidad motor 1:', motor1_speed)
 
             # Esperar 1 segundo antes de leer las RPM
-            time.sleep(1)
+            time.sleep(0.5)
 
             print('RPM motor 1:', rpm_count_motor1)
 
