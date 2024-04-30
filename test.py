@@ -62,7 +62,7 @@ def main():
             end_time = time.time()
 
             time_elapsed = end_time - start_time
-            rpm = (rpm_count / 16) / time_elapsed  # Calcular las RPM
+            rpm = ((rpm_count*64) / 16) / time_elapsed  # Calcular las RPM
             print("RPM: {:.2f}".format(rpm))
 
             rpm_count = 0
