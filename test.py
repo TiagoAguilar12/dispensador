@@ -11,6 +11,14 @@ pinA_motor1 = 17  # Pin A del encoder del motor 1
 pi = pigpio.pi()
 pi.set_mode(pinA_motor1, pigpio.INPUT)
 
+rpm_count_motor1 = 0  # Variable global para contar las RPM del motor 1
+
+def count_rpm(gpio, level, tick):
+    global rpm_count_motor1
+    rpm_count_motor1 += 1
+
+cb_motor1 = pi.callback(pinA_motor1, pigpio.RISING_EDGE, count_rpm)
+
 def control_motor(pin_pwm, pin_dir, speed_percent, direction):
     duty_cycle = int(speed_percent * 255 / 100)
     pi.set_PWM_dutycycle(pin_pwm, duty_cycle)
@@ -47,8 +55,6 @@ def main():
             print('RPM motor 1:', rpm_count_motor1)
 
             time.sleep(0.5)  # Esperar 0.5 segundos antes de leer la siguiente línea
-
-            rpm_count_motor1 = 0  # Reiniciar el contador de RPM del motor 1 para la siguiente iteración
 
             current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
 
