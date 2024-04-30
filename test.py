@@ -52,14 +52,20 @@ def main():
 
             print('Leyendo línea {}: {}'.format(current_line1 + 1, line1))  # Mostrar la línea que se está leyendo
             print('Velocidad motor 1:', motor1_speed)
+
+            # Esperar 1 segundo antes de leer las RPM
+            time.sleep(1)
+
             print('RPM motor 1:', rpm_count_motor1)
 
-            time.sleep(0.5)  # Esperar 0.5 segundos antes de leer la siguiente línea
+            rpm_count_motor1 = 0  # Reiniciar el contador de RPM para la próxima lectura
 
             current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
 
         pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
         pi.write(motor1_en_pin, 0)  # Deshabilitar motor 1
+
+        cb_motor1.cancel()  # Cancelar la callback del encoder del motor 1
 
         pi.stop()
         print('Tiempo de funcionamiento del motor 1 completado.')
