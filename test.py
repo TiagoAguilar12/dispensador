@@ -59,7 +59,7 @@ def main():
         current_line2 = 1
 
         start_time = time.time()
-        while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
+        while time.time() - start_time <= 10:  # Ejemplo: Ejecutar durante 20 segundos
             line1 = lines[current_line1].strip()
             line2 = lines[current_line2].strip()
             motor1_speed = int(line1)
@@ -81,7 +81,7 @@ def main():
 
             rpm_count = 0  # Reiniciar el contador de pulsos después de calcular las RPM
 
-            time.sleep(0.5)  # Esperar 0.5 segundos antes de leer la siguiente línea
+            time.sleep(1)  # Esperar 0.5 segundos antes de leer la siguiente línea
 
         pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
         pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
