@@ -1,8 +1,7 @@
 # -- coding: utf-8 --
-import os
 import time
 import pigpio
-
+# Configuración de pines
 motor1_pwm_pin = 12
 motor1_dir_pin = 24
 motor1_en_pin = 22
@@ -10,58 +9,39 @@ motor2_pwm_pin = 13
 motor2_dir_pin = 25
 motor2_en_pin = 23
 
+# Inicialización de la conexión con pigpio
 pi = pigpio.pi()
 
+# Función para controlar la velocidad y dirección de los motores
 def control_motor(pin_pwm, speed_percent, direction):
-    duty_cycle = int(speed_percent * 255 / 100)
+    duty_cycle = int(speed_percent * 255 / 100)  # Convertir el porcentaje de velocidad a ciclo de trabajo (0-255)
     pi.set_PWM_dutycycle(pin_pwm, duty_cycle)
 
     if direction == 'forward':
-        pi.write(pin_pwm, 1)  # GPIO.HIGH
+        pi.write(motor1_dir_pin, 1)  # GPIO.HIGH
     elif direction == 'backward':
-        pi.write(pin_pwm, 0)  # GPIO.LOW
+        pi.write(motor1_dir_pin, 0)  # GPIO.LOW
     else:
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
 def main():
+    # Configurar pines de habilitación (enable) de los motores
     pi.write(motor1_en_pin, 1)  # GPIO.HIGH
     pi.write(motor2_en_pin, 1)  # GPIO.HIGH
 
-    file_path = '/home/santiago/Documents/dispensador/dispensador/Pbrs.txt'
+    control_motor(motor1_pwm_pin, 50, 'forward')
+    control_motor(motor2_pwm_pin, 50, 'forward')
 
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        total_lines = len(lines)
-        current_line1 = 1
-        current_line2 = 1
+    time.sleep(5)
+    pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
+    pi.set_PWM_dutycycle(motor2_pwm_pin, 0)  # Detener motor 2
 
-        start_time = time.time()
-        while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 60 segundos
-            line1 = lines[current_line1].strip()
-            line2 = lines[current_line2].strip()
-            motor1_speed = int(line1)
-            motor2_speed = int(line2)
+    pi.write(motor1_en_pin, 0)  # Deshabilitar motor 1
+    pi.write(motor2_en_pin, 0)  # Deshabilitar motor 2
 
-            control_motor(motor1_pwm_pin, motor1_speed, 'forward')
-            control_motor(motor2_pwm_pin, motor2_speed, 'forward')
+    pi.stop()
+    print('Movimiento de los motores completado.')
 
-            print('Leyendo línea {}: {}'.format(current_line1 + 1, line1))  # Mostrar la línea que se está leyendo
-
-            current_line1 = (current_line1 + 1) % total_lines  # Avanzar al siguiente valor circularmente
-            current_line2 = (current_line2 + 1) % total_lines  # Avanzar al siguiente valor circularmente
-            print('Velocidad motor 1:', motor1_speed)
-            print('Velocidad motor 2:', motor2_speed)
-            time.sleep(5)  # Esperar 0.5 segundos antes de leer la siguiente línea
-
-        pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
-        pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
-
-        pi.write(motor1_en_pin, 0)
-        pi.write(motor2_en_pin, 0)
-
-        pi.stop()
-        print('Tiempo de funcionamiento de los motores completado.')
-
-if __name__ == '__main__':
+if _name_ == '_main_':
     print('Iniciando programa...')
     main()
