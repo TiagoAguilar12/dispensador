@@ -15,8 +15,10 @@ pi = pigpio.pi()
 pi.set_mode(pinA, pigpio.INPUT)
 
 global rpm_count  # Declarar rpm_count como global
+global rpm_count1  # Declarar rpm_count como global
 
 rpm_count = 0
+rpm_count1 = 0
 rpm = 0
 last_state = pi.read(pinA)
 
@@ -31,17 +33,18 @@ def count_rpmA(gpio, level, tick):
 
     last_state = state
 def count_rpmB(gpio, level, tick):
-    global rpm_count
+    global rpm_count1
     global last_state
 
     state = pi.read(pinB)
     if state != last_state:
-        rpm_count += 1
+        rpm_count1 += 1
 
     last_state = state
 
 cb = pi.callback(pinA, pigpio.EITHER_EDGE, count_rpmA)
 cb = pi.callback(pinB, pigpio.EITHER_EDGE, count_rpmB)
+suma=0
 
 # Función para controlar la velocidad y dirección de los motores
 def control_motor(pin_pwm, pin_dir, speed_percent, direction):
@@ -67,15 +70,22 @@ def main():
     start_time=time.time()
 
     while time.time()-start_time<= 20:  # Ejemplo: Ejecutar durante 20 segundos
+            suma= rpm_count1 + rpm_count
             start_time1 = time.time()
             time.sleep(1)  # Esperar 1 segundo
             end_time = time.time()
             time_elapsed = end_time - start_time1
-            print("contflag: " + str(rpm_count) + "time: " + str(time_elapsed))
-            rpm = (rpm_count / 64) / time_elapsed  # Calcular las RPM
+            print("contflag: " + str(suma) + "time: " + str(time_elapsed))
+            rpm = (suma / 64) / time_elapsed  # Calcular las RPM
+            SIU= (rpm/19)*60
             print("RPM: {:.2f}".format(rpm))
+            print('siu: {:.2f}'.format(SIU))
 
-            rpm_count = 0
+            suma = 0
+            rpm_count=0
+            rpm_count1=0
+            rpm=0
+            SIU=0
     cb.cancel()
     time.sleep(5)
     pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
