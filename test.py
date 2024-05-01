@@ -90,9 +90,7 @@ def main():
         suma = 0
         rpm_count = 0
         rpm_count1 = 0
-        rpm = 0
-        SIU = 0
-
+     
     cb.cancel()
     time.sleep(5)
     pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
