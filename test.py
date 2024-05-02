@@ -58,7 +58,7 @@ def main():
 
     while time.time()-start_time<= 20:
     
-            print("contflag: " + rpm_count + "time: " + '1')
+            print("contflag: " + rpm_count + "time: 1")
             rpm = ((rpm_count / 32) /19)  # Calcular las RPM
             print("RPM: {:.2f}".format(rpm))
 
