@@ -1,4 +1,3 @@
-# -- coding: utf-8 --
 import time
 import pigpio
 
@@ -9,7 +8,6 @@ motor2_pwm_pin = 13
 motor2_dir_pin = 25
 motor2_en_pin = 23
 pinA = 18
-
 
 pi = pigpio.pi()
 pi.set_mode(pinA, pigpio.INPUT)
@@ -31,7 +29,6 @@ def count_rpmA(gpio, level, tick):
 
     last_state = state
 
-
 cb = pi.callback(pinA, pigpio.EITHER_EDGE, count_rpmA)
 
 # Función para controlar la velocidad y dirección de los motores
@@ -52,27 +49,22 @@ def main():
     # Configurar pines de habilitación (enable) de los motores
     pi.write(motor1_en_pin, 1)  # GPIO.HIGH
 
-
     control_motor(motor1_pwm_pin, motor1_dir_pin, 100, 'forward')
-    start_time=time.time()
+    start_time = time.time()
 
-    while time.time()-start_time<= 20:
-    
-            print("contflag: " + rpm_count )
-            rpm = ((rpm_count / 32) /19)  # Calcular las RPM
-            print("RPM: {:.2f}".format(rpm))
+    while time.time() - start_time <= 20:
+        print("contflag: " + str(rpm_count))
+        rpm = ((rpm_count / 32) / 19)  # Calcular las RPM
+        print("RPM: {:.2f}".format(rpm))
 
-            rpm_count = 0
-            time.sleep(1)  # Esperar 1 segundo
+        rpm_count = 0
+        time.sleep(1)  # Esperar 1 segundo
+
     cb.cancel()
- 
     pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
-
     pi.write(motor1_en_pin, 0)  # Deshabilitar motor 1
-
 
     pi.stop()
     print('Movimiento de los motores completado.')
-
 
 main()
