@@ -51,12 +51,12 @@ def main():
     pi.callback(motor1_pwm_pin, pigpio.RISING_EDGE, motor1_callback)
     pi.callback(motor2_pwm_pin, pigpio.RISING_EDGE, motor2_callback)
 
-    control_motor(motor1_pwm_pin, 100, 'forward')
-    control_motor(motor2_pwm_pin, 100, 'forward')
+    control_motor(motor1_pwm_pin, 50, 'forward')
+    control_motor(motor2_pwm_pin, 50, 'forward')
 
-    time.sleep(1)  # Esperar 1 segundo para contar flancos
+    time.sleep(10)  # Esperar 10 segundos para contar flancos
 
-    print('Flancos de subida en 1 segundo:')
+    print('Flancos de subida en 10 segundos:')
     print('Motor 1:', flancos_motor1)
     print('Motor 2:', flancos_motor2)
 
