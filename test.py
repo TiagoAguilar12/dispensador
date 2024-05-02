@@ -5,14 +5,14 @@ import pigpio
 motor1_pwm_pin = 12
 motor1_dir_pin = 24
 motor1_en_pin = 22
-motor1_encoder_pinA = 18  # Pin del encoder del motor 1 para la señal A
-motor1_encoder_pinB = 19  # Pin del encoder del motor 1 para la señal B
+motor1_encoder_pinA = 4  # Pin del encoder del motor 1 para la señal A
+motor1_encoder_pinB = 5  # Pin del encoder del motor 1 para la señal B
 
 motor2_pwm_pin = 13
 motor2_dir_pin = 25
 motor2_en_pin = 23
-motor2_encoder_pinA = 26  # Pin del encoder del motor 2 para la señal A
-motor2_encoder_pinB = 27  # Pin del encoder del motor 2 para la señal B
+motor2_encoder_pinA = 6  # Pin del encoder del motor 2 para la señal A
+motor2_encoder_pinB = 13  # Pin del encoder del motor 2 para la señal B
 
 pi = pigpio.pi()
 
