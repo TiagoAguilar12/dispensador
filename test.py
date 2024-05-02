@@ -85,8 +85,8 @@ def main():
             if tiempo_actual - tiempo_anterior >= INTERVALO:
                 RPS = (numero_flancos_A + numero_flancos_B) / 1216.0
                 RPM = RPS * 60
-                print(f"Revoluciones por segundo: {RPS:.2f} | Revoluciones por Minuto: {RPM:.2f}")
-                numero_flancos_A = 0
+                print("Revoluciones por segundo: {:.2f} | Revoluciones por Minuto: {:.2f}".format(RPS, RPM))
+
                 numero_flancos_B = 0
                 tiempo_anterior = tiempo_actual
                 time.sleep(INTERVALO)
