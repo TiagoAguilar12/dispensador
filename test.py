@@ -63,8 +63,8 @@ def main():
     print('Motor 1:', flancos_motor1)
     print('Motor 2:', flancos_motor2)
 
-    rps_motor1 = calcular_rps(flancos_motor1/(32*19*10))
-    rps_motor2 = calcular_rps(flancos_motor2/(32*19*10))
+    rps_motor1 = calcular_rps(flancos_motor1, 32, 19, 10)
+    rps_motor2 = calcular_rps(flancos_motor2, 32, 19, 10)
 
     print('RPS Motor 1:', rps_motor1)
     print('RPS Motor 2:', rps_motor2)
