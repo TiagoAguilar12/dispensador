@@ -12,8 +12,6 @@ motor2_en_pin = 23
 PIN_ENCODER_A = 4
 PIN_ENCODER_B = 17
 INTERVALO = 1  # Intervalo de 1 segundo en segundos
-vueltas_engranaje = 0
-vueltas_eje = 0
 numero_flancos_A = 0
 numero_flancos_B = 0
 tiempo_anterior = 0
@@ -21,13 +19,29 @@ RPS = 0.0
 RPM = 0.0
 tiempo_actual = 0
 
+PIN_ENCODER2_A = 16
+PIN_ENCODER2_B = 19
+INTERVALO = 1  # Intervalo de 1 segundo en segundos
+numero_flancos_A2 = 0
+numero_flancos_B2 = 0
+tiempo_anterior2 = 0
+RPS2 = 0.0
+RPM2 = 0.0
+tiempo_actual2 = 0
+
 
 pi = pigpio.pi()
+
 
 pi.set_mode(PIN_ENCODER_A, pigpio.INPUT)
 pi.set_pull_up_down(PIN_ENCODER_A, pigpio.PUD_UP)
 pi.set_mode(PIN_ENCODER_B, pigpio.INPUT)
 pi.set_pull_up_down(PIN_ENCODER_B, pigpio.PUD_UP)
+
+pi.set_mode(PIN_ENCODER2_A, pigpio.INPUT)
+pi.set_pull_up_down(PIN_ENCODER2_A, pigpio.PUD_UP)
+pi.set_mode(PIN_ENCODER2_B, pigpio.INPUT)
+pi.set_pull_up_down(PIN_ENCODER2_B, pigpio.PUD_UP)
 
 def contador_flancos_encoder(gpio, level, tick):
     global numero_flancos_A
@@ -37,9 +51,20 @@ def contador_flancos_encoder_b(gpio, level, tick):
     global numero_flancos_B
     numero_flancos_B += 1
 
+def contador_flancos_encoder2(gpio, level, tick):
+    global numero_flancos_A2
+    numero_flancos_A2 += 1
+
+def contador_flancos_encoder_b2(gpio, level, tick):
+    global numero_flancos_B2
+    numero_flancos_B2 += 1
+
+
 cb1 = pi.callback(PIN_ENCODER_A, pigpio.EITHER_EDGE, contador_flancos_encoder)
 cb2 = pi.callback(PIN_ENCODER_B, pigpio.EITHER_EDGE, contador_flancos_encoder_b)
 
+cb3 = pi.callback(PIN_ENCODER2_A, pigpio.EITHER_EDGE, contador_flancos_encoder2)
+cb4 = pi.callback(PIN_ENCODER2_B, pigpio.EITHER_EDGE, contador_flancos_encoder_b2)
 
 def control_motor(pin_pwm, pin_dir, speed_percent, direction):
     duty_cycle = int(speed_percent * 255 / 100)
@@ -53,8 +78,9 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
 def main():
-    global numero_flancos_A, numero_flancos_B, tiempo_anterior
+    global numero_flancos_A, numero_flancos_B, tiempo_anterior, numero_flancos_A2, numero_flancos_B2, tiempo_anterior2
     tiempo_anterior = time.time()  
+    tiempo_anterior2 = time.time()  
     pi.write(motor1_en_pin, 1)  # Habilitar motor 1
     pi.write(motor2_en_pin, 1)  # Habilitar motor 2
 
@@ -69,6 +95,7 @@ def main():
         start_time = time.time()
         while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
             tiempo_actual = time.time()
+            tiempo_actual2 = time.time()
             line1 = lines[current_line1].strip()
             line2 = lines[current_line2].strip()
             motor1_speed = int(line1) 
@@ -86,14 +113,22 @@ def main():
             
             # Calcular RPM usando los flancos contados
             tiempo_pasado = tiempo_actual - tiempo_anterior
+            tiempo_pasado2 = tiempo_actual2 - tiempo_anterior2
             if tiempo_pasado >= INTERVALO:
                 RPS = (numero_flancos_A + numero_flancos_B) / (1216)  # Se divide por 2 ya que se cuentan flancos A y B
                 RPM = RPS * 60
-                print("Revoluciones por segundo: {:.2f} | Revoluciones por Minuto: {:.2f}".format(RPS, RPM))
+                print("Revoluciones por segundo M1: {:.2f} | Revoluciones por Minuto M1: {:.2f}".format(RPS, RPM))
+
+                RPS2 = (numero_flancos_A2 + numero_flancos_B2) / (1216)  # Se divide por 2 ya que se cuentan flancos A y B
+                RPM2 = RPS2 * 60
+                print("Revoluciones por segundo M2: {:.2f} | Revoluciones por Minuto M2: {:.2f}".format(RPS2, RPM2))
 
                 numero_flancos_B = 0
                 numero_flancos_A = 0
                 tiempo_anterior = tiempo_actual
+                numero_flancos_B2 = 0
+                numero_flancos_A2 = 0
+                tiempo_anterior2 = tiempo_actual2
 
             time.sleep(1)
 
