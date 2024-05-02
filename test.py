@@ -95,6 +95,8 @@ def main():
                 numero_flancos_A = 0
                 tiempo_anterior = tiempo_actual
 
+            time.sleep(1)
+
         pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
         pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
 
