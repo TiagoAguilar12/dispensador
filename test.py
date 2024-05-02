@@ -11,12 +11,13 @@ motor1_encoder_pinB = 19  # Pin del encoder del motor 1 para la señal B
 motor2_pwm_pin = 13
 motor2_dir_pin = 25
 motor2_en_pin = 23
-motor2_encoder_pinA = 26  # Pin del encoder del motor 2 para la señal A
+motor2_encoder_pinA = 20  # Pin del encoder del motor 2 para la señal A
 motor2_encoder_pinB = 27  # Pin del encoder del motor 2 para la señal B
 
 pi = pigpio.pi()
 
 encoder_counts_per_rev = 64  # Número de cuentas por revolución del encoder
+motor_resolution = 19  # Resolución del motor (19:1)
 
 motor1_encoder_count = 0
 motor2_encoder_count = 0
@@ -34,22 +35,14 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
 
 def encoder_callback1A(gpio, level, tick):
     global motor1_encoder_count
-    motor1_encoder_count += 1 if level else -1
-
-def encoder_callback1B(gpio, level, tick):
-    global motor1_encoder_count
-    motor1_encoder_count += -1 if level else 1
+    motor1_encoder_count += 1
 
 def encoder_callback2A(gpio, level, tick):
     global motor2_encoder_count
-    motor2_encoder_count += 1 if level else -1
+    motor2_encoder_count += 1
 
-def encoder_callback2B(gpio, level, tick):
-    global motor2_encoder_count
-    motor2_encoder_count += -1 if level else 1
-
-def calcular_rpm(encoder_count, elapsed_time):
-    return (encoder_count / (encoder_counts_per_rev * elapsed_time)) * 60
+def calcular_rps(encoder_count, elapsed_time):
+    return (encoder_count / (encoder_counts_per_rev * motor_resolution)) / elapsed_time
 
 def main():
     global motor1_encoder_count, motor2_encoder_count
@@ -58,10 +51,8 @@ def main():
     pi.write(motor2_en_pin, 1)  # Habilitar motor 2
 
     # Configurar callbacks para los flancos del encoder
-    pi.callback(motor1_encoder_pinA, pigpio.EITHER_EDGE, encoder_callback1A)
-    pi.callback(motor1_encoder_pinB, pigpio.EITHER_EDGE, encoder_callback1B)
-    pi.callback(motor2_encoder_pinA, pigpio.EITHER_EDGE, encoder_callback2A)
-    pi.callback(motor2_encoder_pinB, pigpio.EITHER_EDGE, encoder_callback2B)
+    pi.callback(motor1_encoder_pinA, pigpio.FALLING_EDGE, encoder_callback1A)
+    pi.callback(motor2_encoder_pinA, pigpio.FALLING_EDGE, encoder_callback2A)
 
     # Establecer velocidad al 100% para ambos motores
     control_motor(motor1_pwm_pin, motor1_dir_pin, 100, 'forward')
@@ -70,16 +61,20 @@ def main():
     start_time = time.time()
 
     while time.time() - start_time <= 10:  # Ejemplo: Medir durante 10 segundos
-        # Calcular las RPM de cada motor
+        # Calcular las RPS de cada motor
         elapsed_time = time.time() - start_time
-        rpm_motor1 = calcular_rpm(motor1_encoder_count, elapsed_time)
-        rpm_motor2 = calcular_rpm(motor2_encoder_count, elapsed_time)
+        rps_motor1 = calcular_rps(motor1_encoder_count, elapsed_time)
+        rps_motor2 = calcular_rps(motor2_encoder_count, elapsed_time)
 
-        # Mostrar las RPM de ambos motores
-        print('RPM motor 1:', rpm_motor1)
-        print('RPM motor 2:', rpm_motor2)
+        # Mostrar las RPS de ambos motores
+        print('RPS motor 1:', rps_motor1)
+        print('RPS motor 2:', rps_motor2)
 
-        time.sleep(0.5)  # Esperar 0.5 segundos antes de medir nuevamente
+        # Reiniciar contadores para la siguiente medición
+        motor1_encoder_count = 0
+        motor2_encoder_count = 0
+
+        time.sleep(1)  # Esperar 1 segundo antes de medir nuevamente
 
     pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
     pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
@@ -88,7 +83,7 @@ def main():
     pi.write(motor2_en_pin, 0)  # Deshabilitar motor 2
 
     pi.stop()
-    print('Medición de RPM completada.')
+    print('Medición de RPS completada.')
 
 if __name__ == '__main__':
     main()
