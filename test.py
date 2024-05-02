@@ -21,6 +21,7 @@ RPS = 0.0
 RPM = 0.0
 tiempo_actual = 0
 
+
 pi = pigpio.pi()
 
 pi.set_mode(PIN_ENCODER_A, pigpio.INPUT)
@@ -83,14 +84,16 @@ def main():
             print('Velocidad motor 1:', motor1_speed)
             print('Velocidad motor 2:', motor2_speed)
             
-            if tiempo_actual - tiempo_anterior >= INTERVALO:
-                RPS = (numero_flancos_A + numero_flancos_B) / 1216.0
+            # Calcular RPM usando los flancos contados
+            tiempo_pasado = tiempo_actual - tiempo_anterior
+            if tiempo_pasado >= INTERVALO:
+                RPS = (numero_flancos_A + numero_flancos_B) / (INTERVALO * 2)  # Se divide por 2 ya que se cuentan flancos A y B
                 RPM = RPS * 60
-                print("Revoluciones segundo: {:.2f} | Revoluciones por Minuto: {:.2f}".format(RPS, RPM))
+                print("Revoluciones por segundo: {:.2f} | Revoluciones por Minuto: {:.2f}".format(RPS, RPM))
+
                 numero_flancos_B = 0
                 numero_flancos_A = 0
                 tiempo_anterior = tiempo_actual
-                time.sleep(INTERVALO)
 
         pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
         pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
@@ -102,5 +105,3 @@ def main():
         print('Tiempo de funcionamiento de los motores completado.')
 
 main()
-
-
