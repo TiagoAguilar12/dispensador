@@ -83,7 +83,7 @@ def main():
             print('Velocidad motor 1:', motor1_speed)
             print('Velocidad motor 2:', motor2_speed)
             if tiempo_actual - tiempo_anterior >= INTERVALO:
-                RPS = (numero_flancos_A + numero_flancos_B) / 3200.0
+                RPS = (numero_flancos_A + numero_flancos_B) / 1216.0
                 RPM = RPS * 60
                 print(f"Revoluciones por segundo: {RPS:.2f} | Revoluciones por Minuto: {RPM:.2f}")
                 numero_flancos_A = 0
