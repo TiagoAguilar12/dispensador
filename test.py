@@ -53,7 +53,8 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
 def main():
-
+    global numero_flancos_A, numero_flancos_B, tiempo_anterior
+    #tiempo_anterior = time.time()  
     pi.write(motor1_en_pin, 1)  # Habilitar motor 1
     pi.write(motor2_en_pin, 1)  # Habilitar motor 2
 
