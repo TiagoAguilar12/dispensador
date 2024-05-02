@@ -9,8 +9,8 @@ motor2_pwm_pin = 13
 motor2_dir_pin = 25
 motor2_en_pin = 23
 
-PIN_ENCODER_A = 18
-PIN_ENCODER_B = 21
+PIN_ENCODER_A = 4
+PIN_ENCODER_B = 17
 INTERVALO = 1  # Intervalo de 1 segundo en segundos
 vueltas_engranaje = 0
 vueltas_eje = 0
