@@ -40,6 +40,13 @@ def encoder_callback1A(gpio, level, tick):
 def encoder_callback2A(gpio, level, tick):
     global motor2_encoder_count
     motor2_encoder_count += 1
+def encoder_callback1B(gpio, level, tick):
+    global motor1_encoder_count
+    motor1_encoder_count += 1
+
+def encoder_callback2B(gpio, level, tick):
+    global motor2_encoder_count
+    motor2_encoder_count += 1
 
 def calcular_rps(encoder_count, elapsed_time):
     return ((encoder_count / encoder_counts_per_rev)/ motor_resolution) / elapsed_time
@@ -53,6 +60,8 @@ def main():
     # Configurar callbacks para los flancos del encoder
     pi.callback(motor1_encoder_pinA, pigpio.FALLING_EDGE, encoder_callback1A)
     pi.callback(motor2_encoder_pinA, pigpio.FALLING_EDGE, encoder_callback2A)
+    pi.callback(motor1_encoder_pinB, pigpio.FALLING_EDGE, encoder_callback1B)
+    pi.callback(motor2_encoder_pinB, pigpio.FALLING_EDGE, encoder_callback2B)
 
     # Establecer velocidad al 100% para ambos motores
     control_motor(motor1_pwm_pin, motor1_dir_pin, 100, 'forward')
