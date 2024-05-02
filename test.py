@@ -83,14 +83,15 @@ def main():
             current_line2 = (current_line2 + 1) % total_lines  # Avanzar al siguiente valor circularmente
             print('Velocidad motor 1:', motor1_speed)
             print('Velocidad motor 2:', motor2_speed)
-            if tiempo_actual - tiempo_anterior >= INTERVALO:
-                RPS = (numero_flancos_A + numero_flancos_B) / 1216.0
-                RPM = RPS * 60
-                print("Revoluciones por segundo: {:.2f} | Revoluciones por Minuto: {:.2f}".format(RPS, RPM))
+            
+            RPS = (numero_flancos_A + numero_flancos_B) / 1216.0
+            RPM = RPS * 60
+            print("Revoluciones por segundo: {:.2f} | Revoluciones por Minuto: {:.2f}".format(RPS, RPM))
 
-                numero_flancos_B = 0
-                tiempo_anterior = tiempo_actual
-                time.sleep(INTERVALO)
+            numero_flancos_B = 0
+            numero_flancos_A= 0
+            tiempo_anterior = tiempo_actual
+            time.sleep(1)
            
 
         pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
