@@ -87,7 +87,7 @@ def main():
             # Calcular RPM usando los flancos contados
             tiempo_pasado = tiempo_actual - tiempo_anterior
             if tiempo_pasado >= INTERVALO:
-                RPS = (numero_flancos_A + numero_flancos_B) / (INTERVALO * 2)  # Se divide por 2 ya que se cuentan flancos A y B
+                RPS = (numero_flancos_A + numero_flancos_B) / (1216)  # Se divide por 2 ya que se cuentan flancos A y B
                 RPM = RPS * 60
                 print("Revoluciones por segundo: {:.2f} | Revoluciones por Minuto: {:.2f}".format(RPS, RPM))
 
