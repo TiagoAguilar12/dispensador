@@ -40,6 +40,9 @@ def motor2_callback(gpio, level, tick):
     global flancos_motor2
     flancos_motor2 += 1
 
+def calcular_rps(flancos, resolucion, relacion, tiempo):
+    return flancos / (resolucion * relacion * tiempo)
+
 def main():
     global flancos_motor1, flancos_motor2
 
@@ -59,6 +62,12 @@ def main():
     print('Flancos de subida en 10 segundos:')
     print('Motor 1:', flancos_motor1)
     print('Motor 2:', flancos_motor2)
+
+    rps_motor1 = calcular_rps(flancos_motor1, 32, 19, 10)
+    rps_motor2 = calcular_rps(flancos_motor2, 32, 19, 10)
+
+    print('RPS Motor 1:', rps_motor1)
+    print('RPS Motor 2:', rps_motor2)
 
     pi.set_PWM_dutycycle(motor1_pwm_pin, 0)  # Detener motor 1
     pi.set_PWM_dutycycle(motor2_pwm_pin, 0)  # Detener motor 2
