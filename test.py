@@ -42,7 +42,7 @@ def encoder_callback2A(gpio, level, tick):
     motor2_encoder_count += 1
 
 def calcular_rps(encoder_count, elapsed_time):
-    return (encoder_count / (encoder_counts_per_rev * motor_resolution)) / elapsed_time
+    return ((encoder_count / encoder_counts_per_rev) / motor_resolution) / elapsed_time
 
 def main():
     global motor1_encoder_count, motor2_encoder_count
