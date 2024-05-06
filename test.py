@@ -101,8 +101,8 @@ def main():
             motor1_speed = int(line1) 
             motor2_speed = int(line2) 
 
-            control_motor(motor1_pwm_pin, motor1_dir_pin, 50, 'forward')
-            control_motor(motor2_pwm_pin, motor2_dir_pin, 50, 'forward')
+            control_motor(motor1_pwm_pin, motor1_dir_pin, 100, 'forward')
+            control_motor(motor2_pwm_pin, motor2_dir_pin, 100, 'forward')
 
             print('Leyendo línea {}: {}'.format(current_line1 + 1, line1))  # Mostrar la línea que se está leyendo
 
