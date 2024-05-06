@@ -93,7 +93,7 @@ def main():
         current_line2 = 1
        
         start_time = time.time()
-        while time.time() - start_time <= 20:  # Ejemplo: Ejecutar durante 20 segundos
+        while time.time() - start_time <= 40:  # Ejemplo: Ejecutar durante 20 segundos
             tiempo_actual = time.time()
             tiempo_actual2 = time.time()
             line1 = lines[current_line1].strip()
