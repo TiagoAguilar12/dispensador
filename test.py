@@ -111,26 +111,16 @@ def main():
             print('Velocidad motor 1:', motor1_speed)
             print('Velocidad motor 2:', motor2_speed)
             
-            
             # Calcular RPM usando los flancos contados
-            
             tiempo_pasado = tiempo_actual - tiempo_anterior
             tiempo_pasado2 = tiempo_actual2 - tiempo_anterior2
-
-            correccion_m1 = 0.915  # Factor de corrección calculado para motor 1
-            correccion_m2 = 0.9295  # Factor de corrección calculado para motor 2
-
             if tiempo_pasado >= INTERVALO:
                 RPS = (numero_flancos_A + numero_flancos_B) / (1216)  # Se divide por 2 ya que se cuentan flancos A y B
                 RPM = RPS * 60
-                # Aplica el factor de corrección
-                RPM *= correccion_m1
                 print("Revoluciones por segundo M1: {:.2f} | Revoluciones por Minuto M1: {:.2f}".format(RPS, RPM))
 
                 RPS2 = (numero_flancos_A2 + numero_flancos_B2) / (1216)  # Se divide por 2 ya que se cuentan flancos A y B
                 RPM2 = RPS2 * 60
-                # Aplica el factor de corrección
-                RPM2 *= correccion_m2
                 print("Revoluciones por segundo M2: {:.2f} | Revoluciones por Minuto M2: {:.2f}".format(RPS2, RPM2))
 
                 numero_flancos_B = 0
