@@ -155,7 +155,7 @@ def main():
                 numero_flancos_A2 = 0
                 tiempo_anterior2 = tiempo_actual2
 
-            time.sleep(1)
+            time.sleep(0.5)
 
         # Deshabilitar motores
         pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
