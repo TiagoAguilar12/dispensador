@@ -107,7 +107,7 @@ def main():
         start_time = time.time()
         
         # Bucle principal
-        while time.time() - start_time <= 40:  # Ejecutar durante 40 segundos
+        while time.time() - start_time <= 5:  # Ejecutar durante 40 segundos
             tiempo_actual = time.time()
             tiempo_actual2 = time.time()
 
@@ -136,16 +136,19 @@ def main():
             
             if tiempo_pasado >= INTERVALO:
                 # Calcular RPS y RPM para el motor 1
-                RPS = float((numero_flancos_A + numero_flancos_B) / 1200)
+                totalflan=numero_flancos_A + numero_flancos_B
+                RPS = (numero_flancos_A + numero_flancos_B) / 1200.0
+                print(totalflan)
+                print(RPS)
                 RPM = RPS * 60
                 
-                print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
+                #print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
 
                 # Calcular RPS y RPM para el motor 2
                 RPS2 = float((numero_flancos_A2 + numero_flancos_B2) / 1200)
                 RPM2 = RPS2 * 60
                 
-                print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
+                #print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
 
                 # Restablecer contadores
                 numero_flancos_B = 0
