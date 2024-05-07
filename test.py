@@ -102,7 +102,7 @@ def main():
         lines = file.readlines()
         total_lines = len(lines)
         current_line1 = 0
-        current_line2 = 1
+        current_line2 = 0
 
         start_time = time.time()
         
@@ -119,8 +119,8 @@ def main():
             motor2_speed = int(line2)
             
             # Controlar los motores con las velocidades especificadas
-            control_motor(motor1_pwm_pin, motor1_dir_pin, 50, 'forward')
-            control_motor(motor2_pwm_pin, motor2_dir_pin, 50, 'forward')
+            control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
+            control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
             
             # Avanzar en las líneas circularmente
             current_line1 = (current_line1 + 1) % total_lines
