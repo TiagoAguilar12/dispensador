@@ -115,7 +115,7 @@ def main():
             tiempo_pasado = tiempo_actual - tiempo_anterior
             tiempo_pasado2 = tiempo_actual2 - tiempo_anterior2
             if tiempo_pasado >= INTERVALO:
-                RPS = (numero_flancos_A + numero_flancos_B) / (1200)  # Se divide por 2 ya que se cuentan flancos A y B
+                RPS = (numero_flancos_A + numero_flancos_B) / (1200)  # Se divide por 1200 ya que se cuentan flancos A y B
                 RPM = RPS * 60
                 print("Revoluciones por segundo M1: {:.2f} | Revoluciones por Minuto M1: {:.2f}".format(RPS, RPM))
 
