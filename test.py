@@ -120,8 +120,9 @@ def main():
                 print("Revoluciones por segundo M1: {:.2f} | Revoluciones por Minuto M1: {:.2f}".format(RPS, RPM))
 
                 RPS2 = (numero_flancos_A2 + numero_flancos_B2) / (1200)  # Se divide por 2 ya que se cuentan flancos A y B
+                totalflan2= numero_flancos_A2 + numero_flancos_B2
                 RPM2 = RPS2 * 60
-                print("Revoluciones por segundo M2: {:.2f} | Revoluciones por Minuto M2: {:.2f}".format(RPS2, RPM2))
+                print("Revoluciones por segundo M2: {:.2f} | Revoluciones por Minuto M2: {:.2f}".format(RPS2, RPM2,totalflan2))
 
                 numero_flancos_B = 0
                 numero_flancos_A = 0
