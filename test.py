@@ -95,7 +95,7 @@ def main():
     pi.write(motor2_en_pin, 1)
 
     # Ruta del archivo
-    file_path = '/home/santiago/Documents/dispensador/dispensador/Pbrs.txt'
+    file_path = '/home/santiago/Documents/dispensador/dispensador/Pbrs1.txt'
 
     # Lectura de archivo
     with open(file_path, 'r') as file:
