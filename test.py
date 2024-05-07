@@ -137,13 +137,13 @@ def main():
             if tiempo_pasado >= INTERVALO:
                 # Calcular RPS y RPM para el motor 1
                 RPS = (numero_flancos_A + numero_flancos_B) / 1200.0
-                RPM = RPS * 60.0
+                RPM = RPS * 120.0
                 
                 print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
 
                 # Calcular RPS y RPM para el motor 2
                 RPS2 = (numero_flancos_A2 + numero_flancos_B2) / 1200.0
-                RPM2 = RPS2 * 60.0
+                RPM2 = RPS2 * 120.0
                 
                 print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
 
