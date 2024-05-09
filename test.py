@@ -4,6 +4,7 @@ import time
 import pigpio
 import threading  # Importar threading para ejecutar ambos códigos en paralelo
 from hx711 import HX711  # Importar la clase HX711
+import RPi.GPIO as GPIO  # Importar GPIO para la galga
 
 # Inicialización de Pigpio
 pi = pigpio.pi()
@@ -89,11 +90,10 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
 hx = None
 peso_actual = 0.0
 
-# Función para el código de la galga
-def galga():
-    global hx, peso_actual
-    import RPi.GPIO as GPIO  # Importar GPIO
-
+# Función para calibrar la galga
+def calibrar_galga():
+    global hx
+    
     GPIO.setwarnings(False)  # Eliminar los warnings
     GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
     
@@ -119,14 +119,15 @@ def galga():
         # Calcular la relación de escala para el canal A y ganancia 128
         ratio = reading / value
         hx.set_scale_ratio(ratio)
+        print('Galga calibrada.')
     
-    # Bucle principal para medir el peso continuamente
-    while True:
-        peso_actual = hx.get_weight_mean(20)
-        time.sleep(0.5)
+    # Esperar 20 segundos después de la calibración
+    print('Esperando 20 segundos...')
+    time.sleep(20)
+    print('Iniciando la medición y control de los motores.')
 
-# Función principal
-def main():
+# Función para el control de los motores y medición del peso
+def control_motores_y_medicion():
     global numero_flancos_A, numero_flancos_B, tiempo_anterior, numero_flancos_A2, numero_flancos_B2, tiempo_anterior2, peso_actual
     
     # Inicialización de tiempos
@@ -157,7 +158,7 @@ def main():
             # Bucle principal
             while time.time() - start_time <= 30:  # Ejecutar durante 30 segundos
                 tiempo_actual = time.time()
-                tiempo_actual2 = time.time()
+                tiempo_actual2 = tiempo_actual
 
                 line1 = lines[current_line1].strip()
                 line2 = lines[current_line2].strip()
@@ -204,17 +205,7 @@ def main():
                     tiempo_anterior2 = tiempo_actual2
                 
                 # Registrar los datos en el archivo
-                t = time.time() - start_time
-                output_file.write("Tiempo: ")
-                output_file.write(str(t))
-                output_file.write(" Velocidad M1: ")
-                output_file.write(str(motor1_speed))
-                output_file.write(" Velocidad M2: ")
-                output_file.write(str(motor2_speed))
-                output_file.write(" Peso: ")
-                output_file.write(str(peso_actual))
-                output_file.write("\n")
-                
+                output_file.write(f"{time.time() - start_time:.2f}\t{motor1_speed}\t{motor2_speed}\t{peso_actual:.2f}\n")
                 output_file.flush()  # Asegurarse de guardar los datos
 
                 time.sleep(0.5)
@@ -230,16 +221,14 @@ def main():
             pi.stop()
             print('Tiempo de funcionamiento de los motores completado.')
 
-# Ejecutar las funciones en paralelo
-if __name__ == '__main__':
-    # Crear un hilo para la galga
-    hilo_galga = threading.Thread(target=galga)
+# Ejecutar la función de calibración de la galga
+calibrar_galga()
 
-    # Iniciar el hilo de la galga
-    hilo_galga.start()
+# Crear hilos para ejecutar el control de los motores y la medición del peso en paralelo
+hilo_control = threading.Thread(target=control_motores_y_medicion)
 
-    # Ejecutar la función principal
-    main()
-    
-    # Esperar a que el hilo de la galga termine antes de salir del programa
-    hilo_galga.join()
+# Iniciar los hilos
+hilo_control.start()
+
+# Esperar a que el hilo de control termine antes de salir del programa
+hilo_control.join()
