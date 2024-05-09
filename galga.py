@@ -12,6 +12,7 @@ try:
     # Medir la tara y guardar el valor como compensación para el canal actual
     # y ganancia seleccionada. Eso significa canal A y ganancia 128
     err = hx.zero()
+    #
     # Verifica si todo está correcto
     if err:
         raise ValueError('La tara no se puede definir.')
