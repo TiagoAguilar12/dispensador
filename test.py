@@ -1,8 +1,14 @@
 # -- coding: utf-8 --
+#!/usr/bin/env python3
 import time
 import pigpio
+import threading  # Importar threading para ejecutar ambos códigos en paralelo
+from hx711 import HX711  # Importar la clase HX711
 
-# Pines de motor y encoder
+# Inicialización de Pigpio
+pi = pigpio.pi()
+
+# Configuración de pines de motor y encoder
 motor1_pwm_pin = 12
 motor1_dir_pin = 24
 motor1_en_pin = 22
@@ -32,9 +38,6 @@ RPS = 0.0
 RPM = 0.0
 RPS2 = 0.0
 RPM2 = 0.0
-
-# Inicialización de Pigpio
-pi = pigpio.pi()
 
 # Configuración de pines de entrada para los encoders
 pi.set_mode(PIN_ENCODER_A, pigpio.INPUT)
@@ -82,13 +85,53 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
     else:
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
+# Variables globales para la galga
+hx = None
+peso_actual = 0.0
+
+# Función para el código de la galga
+def galga():
+    global hx, peso_actual
+    import RPi.GPIO as GPIO  # Importar GPIO
+
+    GPIO.setwarnings(False)  # Eliminar los warnings
+    GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
+    
+    # Crear un objeto hx que represente el chip HX711 real
+    hx = HX711(dout_pin=21, pd_sck_pin=20)
+    
+    # Medir la tara y guardar el valor como compensación
+    err = hx.zero()
+    if err:
+        raise ValueError('La tara no se puede definir.')
+    
+    # Calibración de la galga con un peso conocido
+    input('Coloque un peso conocido en la balanza y luego presione Enter')
+    reading = hx.get_data_mean()
+    
+    if reading:
+        known_weight_grams = input('Escriba cuántos gramos eran y presiona Enter: ')
+        try:
+            value = float(known_weight_grams)
+        except ValueError:
+            raise ValueError('Error en la entrada del peso conocido')
+        
+        # Calcular la relación de escala para el canal A y ganancia 128
+        ratio = reading / value
+        hx.set_scale_ratio(ratio)
+    
+    # Bucle principal para medir el peso continuamente
+    while True:
+        peso_actual = hx.get_weight_mean(20)
+        time.sleep(0.5)
+
 # Función principal
 def main():
-    global numero_flancos_A, numero_flancos_B, tiempo_anterior, numero_flancos_A2, numero_flancos_B2, tiempo_anterior2
+    global numero_flancos_A, numero_flancos_B, tiempo_anterior, numero_flancos_A2, numero_flancos_B2, tiempo_anterior2, peso_actual
     
     # Inicialización de tiempos
-    tiempo_anterior = time.time()  
-    tiempo_anterior2 = time.time()  
+    tiempo_anterior = time.time()
+    tiempo_anterior2 = time.time()
     
     # Habilitar motores
     pi.write(motor1_en_pin, 1)
@@ -105,67 +148,89 @@ def main():
         current_line2 = 0
 
         start_time = time.time()
-        
-        # Bucle principal
-        while time.time() - start_time <= 30:  # Ejecutar durante 40 segundos
-            tiempo_actual = time.time()
-            tiempo_actual2 = time.time()
 
-            line1 = lines[current_line1].strip()
-            line2 = lines[current_line2].strip()
-            
-            # Obtener velocidades de los motores
-            motor1_speed = int(line1)
-            motor2_speed = int(line2)
-            
-            # Controlar los motores con las velocidades especificadas
-            control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
-            control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
-            
-            # Avanzar en las líneas circularmente
-            current_line1 = (current_line1 + 1) % total_lines
-            current_line2 = (current_line2 + 1) % total_lines
-            
-            # Imprimir velocidades de los motores
-            print('Velocidad motor 1:', motor1_speed)
-            print('Velocidad motor 2:', motor2_speed)
-            
-            # Calcular RPS y RPM usando flancos contados
-            tiempo_pasado = tiempo_actual - tiempo_anterior
-            tiempo_pasado2 = tiempo_actual2 - tiempo_anterior2
-            
-            if tiempo_pasado >= INTERVALO:
-                # Calcular RPS y RPM para el motor 1
-                RPS = (numero_flancos_A + numero_flancos_B) / 1200.0
-                RPM = RPS * 120.0
+        # Crear el archivo de salida para guardar los datos
+        output_file_path = '/home/santiago/Documents/dispensador/dispensador/resultados.txt'
+        with open(output_file_path, 'w') as output_file:
+            output_file.write("Tiempo\tPorcentaje Motor 1\tPorcentaje Motor 2\tPeso (g)\n")
+
+            # Bucle principal
+            while time.time() - start_time <= 30:  # Ejecutar durante 30 segundos
+                tiempo_actual = time.time()
+                tiempo_actual2 = time.time()
+
+                line1 = lines[current_line1].strip()
+                line2 = lines[current_line2].strip()
+
+                # Obtener velocidades de los motores
+                motor1_speed = int(line1)
+                motor2_speed = int(line2)
+
+                # Controlar los motores con las velocidades especificadas
+                control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
+                control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
+
+                # Avanzar en las líneas circularmente
+                current_line1 = (current_line1 + 1) % total_lines
+                current_line2 = (current_line2 + 1) % total_lines
+
+                # Imprimir velocidades de los motores
+                print('Velocidad motor 1:', motor1_speed)
+                print('Velocidad motor 2:', motor2_speed)
+
+                # Calcular RPS y RPM usando flancos contados
+                tiempo_pasado = tiempo_actual - tiempo_anterior
+                tiempo_pasado2 = tiempo_actual2 - tiempo_anterior2
+
+                if tiempo_pasado >= INTERVALO:
+                    # Calcular RPS y RPM para el motor 1
+                    RPS = (numero_flancos_A + numero_flancos_B) / 1200.0
+                    RPM = RPS * 60.0
+                    
+                    print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
+
+                    # Calcular RPS y RPM para el motor 2
+                    RPS2 = (numero_flancos_A2 + numero_flancos_B2) / 1200.0
+                    RPM2 = RPS2 * 60.0
+                    
+                    print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
+
+                    # Restablecer contadores
+                    numero_flancos_B = 0
+                    numero_flancos_A = 0
+                    tiempo_anterior = tiempo_actual
+                    numero_flancos_B2 = 0
+                    numero_flancos_A2 = 0
+                    tiempo_anterior2 = tiempo_actual2
                 
-                print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
+                # Registrar los datos en el archivo
 
-                # Calcular RPS y RPM para el motor 2
-                RPS2 = (numero_flancos_A2 + numero_flancos_B2) / 1200.0
-                RPM2 = RPS2 * 120.0
-                
-                print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
+                output_file.write(f"{time.time() - start_time:.2f}\t{motor1_speed}\t{motor2_speed}\t{peso_actual:.2f}\n")
+                output_file.flush()  # Asegurarse de guardar los datos
 
-                # Restablecer contadores
-                numero_flancos_B = 0
-                numero_flancos_A = 0
-                tiempo_anterior = tiempo_actual
-                numero_flancos_B2 = 0
-                numero_flancos_A2 = 0
-                tiempo_anterior2 = tiempo_actual2
+                time.sleep(0.5)
+            
+            # Deshabilitar motores
+            pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
+            pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
 
-            time.sleep(0.5)
+            pi.write(motor1_en_pin, 0)
+            pi.write(motor2_en_pin, 0)
 
-        # Deshabilitar motores
-        pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
-        pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
+            # Detener Pigpio
+            pi.stop()
+            print('Tiempo de funcionamiento de los motores completado.')
 
-        pi.write(motor1_en_pin, 0)
-        pi.write(motor2_en_pin, 0)
+# Ejecutar las funciones en paralelo
+if __name__ == '__main__':
+    # Crear un hilo para la galga
+    hilo_galga = threading.Thread(target=galga)
 
-        # Detener Pigpio
-        pi.stop()
-        print('Tiempo de funcionamiento de los motores completado.')
+    # Iniciar el hilo de la galga
+    hilo_galga.start()
 
-main()
+    # Ejecutar la función principal
+    main()
+    
+    # Esperar a que el hilo de la galga termine antes de salir del programa
+    hilo_galga.join()
