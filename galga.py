@@ -24,12 +24,13 @@ try:
     else:
         print('Dato invalido', reading)
 
-    print(reading)    
+    
  
     # Para calcular la tasa de conversión a algunas unidades, en en este caso gramos,
     # Se debe partir de un peso conocido para ajustar.
     input('Coloque un peso conocido en la balanza y luego presione Enter')
     reading = hx.get_data_mean()
+    print(reading)    
     if reading:
         print('Valor medio de HX711 restado para compensar:', reading)
         known_weight_grams = input(
