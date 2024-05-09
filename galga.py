@@ -31,7 +31,7 @@ try:
     input('Coloque un peso conocido en la balanza y luego presione Enter')
     reading = hx.get_data_mean()
     print(reading)    
-    if reading:
+    if reading == 0:
         print('Valor medio de HX711 restado para compensar:', reading)
         known_weight_grams = input(
             'Escriba cuántos gramos eran y presiona Enter: ')
