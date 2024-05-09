@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
 import pigpio
 from hx711 import HX711
@@ -45,6 +44,3 @@ except (KeyboardInterrupt, SystemExit):
 
 finally:
     pi.stop()
-=======
-codigo de la galga
->>>>>>> c7808d5f5cdea4743cda5316923402c5d321698d
