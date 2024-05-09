@@ -23,6 +23,8 @@ try:
               reading)
     else:
         print('Dato invalido', reading)
+
+    print(reading)    
  
     # Para calcular la tasa de conversión a algunas unidades, en en este caso gramos,
     # Se debe partir de un peso conocido para ajustar.
