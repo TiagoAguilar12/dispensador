@@ -204,8 +204,17 @@ def main():
                     tiempo_anterior2 = tiempo_actual2
                 
                 # Registrar los datos en el archivo
-
-                output_file.write(f"{time.time() - start_time:.2f}\t{motor1_speed}\t{motor2_speed}\t{peso_actual:.2f}\n")
+                t = time.time() - start_time
+                output_file.write("Tiempo: ")
+                output_file.write(str(t))
+                output_file.write(" Velocidad M1: ")
+                output_file.write(str(motor1_speed))
+                output_file.write(" Velocidad M2: ")
+                output_file.write(str(motor2_speed))
+                output_file.write(" Peso: ")
+                output_file.write(str(peso_actual))
+                output_file.write("\n")
+                
                 output_file.flush()  # Asegurarse de guardar los datos
 
                 time.sleep(0.5)
