@@ -1,11 +1,8 @@
-# -- coding: utf-8 --
-#!/usr/bin/env python3
 import time
 import pigpio
-import threading  # Importar threading para ejecutar ambos códigos en paralelo
-from hx711 import HX711  # Importar la clase HX711
-import RPi.GPIO as GPIO  # Importar GPIO para la galga
-
+import threading
+from hx711 import HX711
+import RPi.GPIO as GPIO
 
 # Inicialización de Pigpio
 pi = pigpio.pi()
@@ -88,11 +85,10 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
 # Variables globales para la galga
-# Crear un objeto hx que represente el chip HX711 real
 hx = None
 peso_actual = 0.0
-GPIO.setwarnings(False)  # Eliminar los warnings
-GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
 
 # Función para calibrar la galga
 def calibrar_galga():
@@ -114,8 +110,8 @@ def calibrar_galga():
             value = float(known_weight_grams)
             print(value, 'gramos')
         except ValueError:
-            print('Entero o flotante esperado y tengo:',
-                  known_weight_grams)
+            print('Entero o flotante esperado y tengo:', known_weight_grams)
+        
         # Calcular la relación de escala para el canal A y ganancia 128
         ratio = reading / value
         hx.set_scale_ratio(ratio)
@@ -140,7 +136,7 @@ def control_motores_y_medicion():
 
     # Ruta del archivo
     file_path = '/home/santiago/Documents/dispensador/dispensador/Pbrs1.txt'
-    calibrar_galga()
+    
     # Lectura de archivo
     with open(file_path, 'r') as file:
         lines = file.readlines()
@@ -156,8 +152,6 @@ def control_motores_y_medicion():
             output_file.write("Tiempo\tPorcentaje Motor 1\tPorcentaje Motor 2\tPeso (g)\n")
 
             # Bucle principal
-
-
             while time.time() - start_time <= 30:  # Ejecutar durante 30 segundos
                 tiempo_actual = time.time()
                 tiempo_actual2 = tiempo_actual
@@ -176,10 +170,6 @@ def control_motores_y_medicion():
                 # Avanzar en las líneas circularmente
                 current_line1 = (current_line1 + 1) % total_lines
                 current_line2 = (current_line2 + 1) % total_lines
-
-                # Imprimir velocidades de los motores
-                print('Velocidad motor 1:', motor1_speed)
-                print('Velocidad motor 2:', motor2_speed)
 
                 # Calcular RPS y RPM usando flancos contados
                 tiempo_pasado = tiempo_actual - tiempo_anterior
@@ -208,7 +198,7 @@ def control_motores_y_medicion():
                     numero_flancos_A2 = 0
                     tiempo_anterior2 = tiempo_actual2
                 
-                # # Registrar los datos en el archivo
+                # Registrar los datos en el archivo
                 t = time.time() - start_time
                 output_file.write("Tiempo: ")
                 output_file.write(str(t))
@@ -235,12 +225,8 @@ def control_motores_y_medicion():
             pi.stop()
             print('Tiempo de funcionamiento de los motores completado.')
 
+# Llama a la función de calibración al inicio del programa
+calibrar_galga()
+
+# Ejecución del código para controlar motores y medir peso
 control_motores_y_medicion()
-# Crear hilos para ejecutar el control de los motores y la medición del peso en paralelo
-# hilo_control = threading.Thread(target=control_motores_y_medicion)
-
-# # Iniciar los hilos
-# # hilo_control.start()
-
-# # Esperar a que el hilo de control termine antes de salir del programa
-# #hilo_control.join()
