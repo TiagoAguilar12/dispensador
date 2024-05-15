@@ -89,7 +89,7 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
 
 # Variables globales para la galga
 # Crear un objeto hx que represente el chip HX711 real
-hx = HX711(dout_pin=21, pd_sck_pin=20)
+hx = None
 peso_actual = 0.0
 GPIO.setwarnings(False)  # Eliminar los warnings
 GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
@@ -97,7 +97,7 @@ GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
 # Función para calibrar la galga
 def calibrar_galga():
     global hx
-
+    hx = HX711(dout_pin=21, pd_sck_pin=20)
     # Medir la tara y guardar el valor como compensación
     err = hx.zero()
     if err:
@@ -158,7 +158,7 @@ def control_motores_y_medicion():
             # Bucle principal
 
             calibrar_galga()
-            
+
             while time.time() - start_time <= 30:  # Ejecutar durante 30 segundos
                 tiempo_actual = time.time()
                 tiempo_actual2 = tiempo_actual
