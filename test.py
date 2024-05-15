@@ -114,10 +114,10 @@ def calibrar_galga():
         known_weight_grams = input('Escriba cuántos gramos eran y presiona Enter: ')
         try:
             value = float(known_weight_grams)
-            print(value,'gramos')
+            print(value, 'gramos')
         except ValueError:
-            raise ValueError('Error en la entrada del peso conocido')
-        
+            print('Entero o flotante esperado y tengo:',
+                  known_weight_grams)
         # Calcular la relación de escala para el canal A y ganancia 128
         ratio = reading / value
         hx.set_scale_ratio(ratio)
@@ -237,12 +237,12 @@ def control_motores_y_medicion():
 
 # Ejecutar la función de calibración de la galga
 calibrar_galga()
-
+control_motores_y_medicion()
 # Crear hilos para ejecutar el control de los motores y la medición del peso en paralelo
-hilo_control = threading.Thread(target=control_motores_y_medicion)
+# hilo_control = threading.Thread(target=control_motores_y_medicion)
 
-# Iniciar los hilos
-hilo_control.start()
+# # Iniciar los hilos
+# # hilo_control.start()
 
-# Esperar a que el hilo de control termine antes de salir del programa
-hilo_control.join()
+# # Esperar a que el hilo de control termine antes de salir del programa
+# #hilo_control.join()
