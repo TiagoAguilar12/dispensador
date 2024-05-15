@@ -121,9 +121,7 @@ def calibrar_galga():
         hx.set_scale_ratio(ratio)
         print('Galga calibrada.')
     
-    # Esperar 20 segundos después de la calibración
-    print('Esperando 10 segundos...')
-    time.sleep(10)
+    
     print('Iniciando la medición y control de los motores.')
 
 # Función para el control de los motores y medición del peso
