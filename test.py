@@ -110,9 +110,11 @@ def calibrar_galga():
     reading = hx.get_data_mean()
     
     if reading:
+        print(reading)
         known_weight_grams = input('Escriba cuántos gramos eran y presiona Enter: ')
         try:
             value = float(known_weight_grams)
+            print(value,'gramos')
         except ValueError:
             raise ValueError('Error en la entrada del peso conocido')
         
@@ -122,8 +124,8 @@ def calibrar_galga():
         print('Galga calibrada.')
     
     # Esperar 20 segundos después de la calibración
-    print('Esperando 20 segundos...')
-    time.sleep(20)
+    print('Esperando 10 segundos...')
+    time.sleep(10)
     print('Iniciando la medición y control de los motores.')
 
 # Función para el control de los motores y medición del peso
