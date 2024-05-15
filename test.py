@@ -2,7 +2,6 @@
 #!/usr/bin/env python3
 import time
 import pigpio
-import threading  # Importar threading para ejecutar ambos códigos en paralelo
 from hx711 import HX711  # Importar la clase HX711
 import RPi.GPIO as GPIO  # Importar GPIO para la galga
 
@@ -218,7 +217,7 @@ def control_motores_y_medicion():
                 output_file.write(" Velocidad M2: ")
                 output_file.write(str(RPM2))
                 output_file.write(" Peso: ")
-                output_file.write(" %.2f" % (hx.get_weight_mean(20)))
+                output_file.write(" %.2f" % (peso_actual))
                 output_file.write("\n")
 
                 output_file.flush()  # Asegurarse de guardar los datos
@@ -239,9 +238,5 @@ def control_motores_y_medicion():
 
 # Ejecutar la función de calibración de la galga
 calibrar_galga()
+# Funcion motores
 control_motores_y_medicion()
-# Crear hilos para ejecutar el control de los motores y la medición del peso en paralelo
-# hilo_control = threading.Thread(target=control_motores_y_medicion)
-# hilo_control.start()
-# # Esperar a que el hilo de control termine antes de salir del programa
-# hilo_control.join()
