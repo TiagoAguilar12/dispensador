@@ -140,7 +140,7 @@ def control_motores_y_medicion():
 
     # Ruta del archivo
     file_path = '/home/santiago/Documents/dispensador/dispensador/Pbrs1.txt'
-
+    calibrar_galga()
     # Lectura de archivo
     with open(file_path, 'r') as file:
         lines = file.readlines()
@@ -157,7 +157,6 @@ def control_motores_y_medicion():
 
             # Bucle principal
 
-            calibrar_galga()
 
             while time.time() - start_time <= 30:  # Ejecutar durante 30 segundos
                 tiempo_actual = time.time()
