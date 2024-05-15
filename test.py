@@ -196,9 +196,10 @@ def control_motores_y_medicion():
                     
                     print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
 
-                    print("El peso actual en gramos es de %.2f" % (hx.get_weight_mean(20)))
+                    peso_actual = hx.get_weight_mean(20)
 
-                    peso_actual = hx.get_raw_data_mean()
+                    print("El peso actual en gramos es de %.2f" % (peso_actual))
+
 
                     # Restablecer contadores
                     numero_flancos_B = 0
@@ -238,8 +239,9 @@ def control_motores_y_medicion():
 
 # Ejecutar la función de calibración de la galga
 calibrar_galga()
+control_motores_y_medicion()
 # Crear hilos para ejecutar el control de los motores y la medición del peso en paralelo
-hilo_control = threading.Thread(target=control_motores_y_medicion)
-hilo_control.start()
-# Esperar a que el hilo de control termine antes de salir del programa
-hilo_control.join()
+# hilo_control = threading.Thread(target=control_motores_y_medicion)
+# hilo_control.start()
+# # Esperar a que el hilo de control termine antes de salir del programa
+# hilo_control.join()
