@@ -196,6 +196,8 @@ def control_motores_y_medicion():
                     
                     print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
 
+                    print("El peso actual en gramos es de %.2f" % (hx.get_weight_mean(20)))
+
                     peso_actual = hx.get_raw_data_mean()
 
                     # Restablecer contadores
@@ -215,7 +217,7 @@ def control_motores_y_medicion():
                 output_file.write(" Velocidad M2: ")
                 output_file.write(str(RPM2))
                 output_file.write(" Peso: ")
-                output_file.write(str(hx.get_weight_mean(20)))
+                output_file.write(" %.2f" % (hx.get_weight_mean(20)))
                 output_file.write("\n")
 
                 output_file.flush()  # Asegurarse de guardar los datos
