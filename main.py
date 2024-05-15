@@ -121,7 +121,7 @@ def main():
             # Controlar los motores con las velocidades especificadas
             control_motor(motor1_pwm_pin, motor1_dir_pin, 30, 'forward')
             control_motor(motor2_pwm_pin, motor2_dir_pin, 30, 'forward')
-            
+            #
             # Avanzar en las líneas circularmente
             current_line1 = (current_line1 + 1) % total_lines
             current_line2 = (current_line2 + 1) % total_lines
