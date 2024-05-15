@@ -117,7 +117,7 @@ def main():
             # Obtener velocidades de los motores
             motor1_speed = int(line1)
             motor2_speed = int(line2)
-            
+            # C
             # Controlar los motores con las velocidades especificadas
             control_motor(motor1_pwm_pin, motor1_dir_pin, 90, 'forward')
             control_motor(motor2_pwm_pin, motor2_dir_pin, 90, 'forward')
