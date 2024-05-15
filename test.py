@@ -215,7 +215,7 @@ def control_motores_y_medicion():
                 output_file.write(" Velocidad M2: ")
                 output_file.write(str(RPM2))
                 output_file.write(" Peso: ")
-                output_file.write(str(peso_actual))
+                output_file.write(str(hx.get_weight_mean(20)))
                 output_file.write("\n")
 
                 output_file.flush()  # Asegurarse de guardar los datos
