@@ -6,6 +6,7 @@ import threading  # Importar threading para ejecutar ambos códigos en paralelo
 from hx711 import HX711  # Importar la clase HX711
 import RPi.GPIO as GPIO  # Importar GPIO para la galga
 
+
 # Inicialización de Pigpio
 pi = pigpio.pi()
 
@@ -87,19 +88,16 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
 # Variables globales para la galga
-hx = None
+# Crear un objeto hx que represente el chip HX711 real
+hx = HX711(dout_pin=21, pd_sck_pin=20)
 peso_actual = 0.0
+GPIO.setwarnings(False)  # Eliminar los warnings
+GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
 
 # Función para calibrar la galga
 def calibrar_galga():
     global hx
-    
-    GPIO.setwarnings(False)  # Eliminar los warnings
-    GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
-    
-    # Crear un objeto hx que represente el chip HX711 real
-    hx = HX711(dout_pin=21, pd_sck_pin=20)
-    
+
     # Medir la tara y guardar el valor como compensación
     err = hx.zero()
     if err:
@@ -158,6 +156,9 @@ def control_motores_y_medicion():
             output_file.write("Tiempo\tPorcentaje Motor 1\tPorcentaje Motor 2\tPeso (g)\n")
 
             # Bucle principal
+
+            calibrar_galga()
+            
             while time.time() - start_time <= 30:  # Ejecutar durante 30 segundos
                 tiempo_actual = time.time()
                 tiempo_actual2 = tiempo_actual
@@ -235,8 +236,6 @@ def control_motores_y_medicion():
             pi.stop()
             print('Tiempo de funcionamiento de los motores completado.')
 
-# Ejecutar la función de calibración de la galga
-calibrar_galga()
 control_motores_y_medicion()
 # Crear hilos para ejecutar el control de los motores y la medición del peso en paralelo
 # hilo_control = threading.Thread(target=control_motores_y_medicion)
