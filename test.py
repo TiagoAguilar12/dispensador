@@ -128,7 +128,7 @@ def calibrar_galga():
 
 # Función para el control de los motores y medición del peso
 def control_motores_y_medicion():
-    global numero_flancos_A, numero_flancos_B, tiempo_anterior, numero_flancos_A2, numero_flancos_B2, tiempo_anterior2, peso_actual
+    global numero_flancos_A, numero_flancos_B, tiempo_anterior, numero_flancos_A2, numero_flancos_B2, tiempo_anterior2, peso_actual, RPM, RPM2
     
     # Inicialización de tiempos
     tiempo_anterior = time.time()
