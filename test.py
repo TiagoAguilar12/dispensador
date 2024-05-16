@@ -124,8 +124,10 @@ def calibrar_galga():
         ratio = reading / value
         hx.set_scale_ratio(ratio)
         print('Galga calibrada.')
+        time.sleep(15)
+
     
-    
+    print(hx.get_weight_mean(20))
     print('Iniciando la medición y control de los motores.')
 
 # Función para el control de los motores y medición del peso
@@ -160,7 +162,7 @@ def control_motores_y_medicion():
             # Bucle principal
 
 
-            while time.time() - start_time <= 3:  # Ejecutar durante 30 segundos
+            while time.time() - start_time <= 120:  # Ejecutar durante 30 segundos
                 tiempo_actual = time.time()
                 tiempo_actual2 = tiempo_actual
 
@@ -204,8 +206,8 @@ def control_motores_y_medicion():
 
                     print("El peso actual en gramos es de %.2f" % (peso_actual))
 
-                    v1 = (11.5*motor1_speed)-0.107
-                    v2 = (11.5*motor2_speed)-0.111
+                    v1 = (0.0867*motor1_speed)+0.00898
+                    v2 = (0.0866*motor2_speed)+0.00967
 
                     print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1,v2))
 
@@ -222,6 +224,10 @@ def control_motores_y_medicion():
                 t = time.time() - start_time
                 output_file.write("Tiempo: ")
                 output_file.write(str(t))
+                output_file.write("PWM 1: ")
+                output_file.write(str(motor1_speed))
+                output_file.write("PWM 2: ")
+                output_file.write(str(motor2_speed))
                 output_file.write(" Velocidad M1: ")
                 output_file.write(str(RPM))
                 output_file.write(" Velocidad M2: ")
