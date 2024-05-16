@@ -40,6 +40,11 @@ RPM = 0.0
 RPS2 = 0.0
 RPM2 = 0.0
 
+# Variable Voltaje
+
+v1 = 0.0
+v2 = 0.0
+
 # Configuración de pines de entrada para los encoders
 pi.set_mode(PIN_ENCODER_A, pigpio.INPUT)
 pi.set_pull_up_down(PIN_ENCODER_A, pigpio.PUD_UP)
@@ -125,7 +130,7 @@ def calibrar_galga():
 
 # Función para el control de los motores y medición del peso
 def control_motores_y_medicion():
-    global numero_flancos_A, numero_flancos_B, tiempo_anterior, numero_flancos_A2, numero_flancos_B2, tiempo_anterior2, peso_actual, RPM, RPM2
+    global numero_flancos_A, numero_flancos_B, tiempo_anterior, numero_flancos_A2, numero_flancos_B2, tiempo_anterior2, peso_actual, RPM, RPM2,v1,v2
     
     # Inicialización de tiempos
     tiempo_anterior = time.time()
@@ -155,7 +160,7 @@ def control_motores_y_medicion():
             # Bucle principal
 
 
-            while time.time() - start_time <= 30:  # Ejecutar durante 30 segundos
+            while time.time() - start_time <= 3:  # Ejecutar durante 30 segundos
                 tiempo_actual = time.time()
                 tiempo_actual2 = tiempo_actual
 
@@ -199,6 +204,11 @@ def control_motores_y_medicion():
 
                     print("El peso actual en gramos es de %.2f" % (peso_actual))
 
+                    v1 = (11.5*motor1_speed)-0.107
+                    v2 = (11.5*motor2_speed)-0.111
+
+                    print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1,v2))
+
 
                     # Restablecer contadores
                     numero_flancos_B = 0
@@ -216,8 +226,10 @@ def control_motores_y_medicion():
                 output_file.write(str(RPM))
                 output_file.write(" Velocidad M2: ")
                 output_file.write(str(RPM2))
-                output_file.write(" Peso: ")
+                output_file.write(" Peso(g) : ")
                 output_file.write(" %.2f" % (peso_actual))
+                output_file.write(" Voltaje 1: %.2f"%(v1))
+                output_file.write(" Voltaje 2: %.2f"%(v2))
                 output_file.write("\n")
 
                 output_file.flush()  # Asegurarse de guardar los datos
