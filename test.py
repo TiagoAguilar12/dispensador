@@ -222,20 +222,20 @@ def control_motores_y_medicion():
                 
                 # # Registrar los datos en el archivo
                 t = time.time() - start_time
-                output_file.write("Tiempo: ")
+                output_file.write("Tiempo:")
                 output_file.write(str(t))
-                output_file.write("PWM 1: ")
+                output_file.write(", PWM_1:")
                 output_file.write(str(motor1_speed))
-                output_file.write("PWM 2: ")
+                output_file.write(", PWM_2:")
                 output_file.write(str(motor2_speed))
-                output_file.write(" Velocidad M1: ")
+                output_file.write(", Velocidad_M1:")
                 output_file.write(str(RPM))
-                output_file.write(" Velocidad M2: ")
+                output_file.write(", Velocidad_M2:")
                 output_file.write(str(RPM2))
-                output_file.write(" Peso(g) : ")
-                output_file.write(" %.2f" % (peso_actual))
-                output_file.write(" Voltaje 1: %.2f"%(v1))
-                output_file.write(" Voltaje 2: %.2f"%(v2))
+                output_file.write(", Peso(g):")
+                output_file.write("%.2f"%(peso_actual))
+                output_file.write(", Voltaje_1:%.2f"%(v1))
+                output_file.write(", Voltaje_2:%.2f"%(v2))
                 output_file.write("\n")
 
                 output_file.flush()  # Asegurarse de guardar los datos
