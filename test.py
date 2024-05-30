@@ -22,7 +22,7 @@ PIN_ENCODER_B = 17
 PIN_ENCODER2_A = 16
 PIN_ENCODER2_B = 19
 
-INTERVALO = 1 # Intervalo de tiempo en segundos
+INTERVALO = 0.1 # Intervalo de tiempo en segundos
 
 # Contadores de flancos
 numero_flancos_A = 0
@@ -181,11 +181,12 @@ def control_motores_y_medicion():
                 current_line1 = (current_line1 + 1) % total_lines
                 current_line2 = (current_line2 + 1) % total_lines
 
-                # Imprimir velocidades de los motores
-                print('Velocidad motor 1:', motor1_speed)
-                print('Velocidad motor 2:', motor2_speed)
+                # # Imprimir velocidades de los motores
+                # print('Velocidad motor 1:', motor1_speed)
+                # print('Velocidad motor 2:', motor2_speed)
 
                 # Calcular RPS y RPM usando flancos contados
+
                 tiempo_pasado = tiempo_actual - tiempo_anterior
                 tiempo_pasado2 = tiempo_actual2 - tiempo_anterior2
 
@@ -201,6 +202,11 @@ def control_motores_y_medicion():
                     RPM2 = RPS2 * 60.0
                     
                     print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
+                    print("Flancos A ", numero_flancos_A)
+                    print("Flancos A ", numero_flancos_B)
+                    print("Flancos A ", RPS)
+
+                    
 
                     peso_actual = hx.get_weight_mean(20)
 
@@ -234,7 +240,7 @@ def control_motores_y_medicion():
 
                 output_file.flush()  # Asegurarse de guardar los datos
 
-                time.sleep(1)
+                
             
             # Deshabilitar motores
             pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
