@@ -22,7 +22,7 @@ PIN_ENCODER_B = 17
 PIN_ENCODER2_A = 16
 PIN_ENCODER2_B = 19
 
-INTERVALO = 0.5  # Intervalo de tiempo en segundos
+INTERVALO = 0.1  # Intervalo de tiempo en segundos
 
 # Contadores de flancos
 numero_flancos_A = 0
@@ -234,7 +234,7 @@ def control_motores_y_medicion():
 
                 output_file.flush()  # Asegurarse de guardar los datos
 
-                time.sleep(0.5)
+                time.sleep(0.1)
             
             # Deshabilitar motores
             pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
