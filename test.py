@@ -124,7 +124,7 @@ def calibrar_galga():
         ratio = reading / value
         hx.set_scale_ratio(ratio)
         print('Galga calibrada.')
-        time.sleep(15)
+        time.sleep(10)
 
     
     print(hx.get_weight_mean(20))
@@ -162,7 +162,7 @@ def control_motores_y_medicion():
             # Bucle principal
 
 
-            while time.time() - start_time <= 120:  # Ejecutar durante 30 segundos
+            while time.time() - start_time <= 20:  # Ejecutar durante 30 segundos
                 tiempo_actual = time.time()
                 tiempo_actual2 = tiempo_actual
 
@@ -234,7 +234,7 @@ def control_motores_y_medicion():
 
                 output_file.flush()  # Asegurarse de guardar los datos
 
-                time.sleep(0.1)
+                time.sleep(0.5)
             
             # Deshabilitar motores
             pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
