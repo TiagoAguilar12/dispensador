@@ -191,6 +191,7 @@ def control_motores_y_medicion():
 
                 if tiempo_pasado >= INTERVALO:
                     # Calcular RPS y RPM para el motor 1
+                    print(numero_flancos_A + numero_flancos_B)
                     RPS = (numero_flancos_A + numero_flancos_B) / 1200.0
                     RPM = RPS * 60.0
                     
