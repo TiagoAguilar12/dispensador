@@ -239,6 +239,7 @@ def control_motores_y_medicion():
                 output_file.write("\n")
 
                 output_file.flush()  # Asegurarse de guardar los datos
+                time.slee(0.1)
 
                 
             
