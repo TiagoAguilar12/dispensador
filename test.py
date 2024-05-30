@@ -162,7 +162,7 @@ def control_motores_y_medicion():
             # Bucle principal
 
 
-            while time.time() - start_time <= 120:  # Ejecutar durante 30 segundos
+            while time.time() - start_time <= 30:  # Ejecutar durante 30 segundos
                 tiempo_actual = time.time()
                 tiempo_actual2 = tiempo_actual
 
