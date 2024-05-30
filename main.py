@@ -119,8 +119,8 @@ def main():
             motor2_speed = int(line2)
             
             # Controlar los motores con las velocidades especificadas
-            control_motor(motor1_pwm_pin, motor1_dir_pin, 30, 'forward')
-            control_motor(motor2_pwm_pin, motor2_dir_pin, 30, 'forward')
+            control_motor(motor1_pwm_pin, motor1_dir_pin, 80, 'forward')
+            control_motor(motor2_pwm_pin, motor2_dir_pin, 80, 'forward')
             #
             # Avanzar en las líneas circularmente
             current_line1 = (current_line1 + 1) % total_lines
@@ -128,6 +128,8 @@ def main():
             
             # Imprimir velocidades de los motores
             print('Velocidad motor 1:', motor1_speed)
+
+        
             print('Velocidad motor 2:', motor2_speed)
             
             # Calcular RPS y RPM usando flancos contados
@@ -142,6 +144,8 @@ def main():
                 print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
 
                 # Calcular RPS y RPM para el motor 2
+                print("flancos a",numero_flancos_A)
+                print("flancos a",numero_flancos_B)
                 RPS2 = (numero_flancos_A2 + numero_flancos_B2) / 1200.0
                 RPM2 = RPS2 * 120.0
                 
