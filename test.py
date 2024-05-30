@@ -155,7 +155,7 @@ def control_motores_y_medicion():
         start_time = time.time()
 
         # Crear el archivo de salida para guardar los datos
-        output_file_path = '/home/santiago/Documents/dispensador/dispensador/resultadosM2_Rojoprueba.txt'
+        output_file_path = '/home/santiago/Documents/dispensador/dispensador/resultadosM1_Blanco.txt'
         with open(output_file_path, 'w') as output_file:
             output_file.write("Tiempo\t PWM \t Velocidad \tPeso (g)\t Voltaje \n")
 
