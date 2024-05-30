@@ -157,7 +157,7 @@ def control_motores_y_medicion():
         # Crear el archivo de salida para guardar los datos
         output_file_path = '/home/santiago/Documents/dispensador/dispensador/resultadosM2_Rojoprueba.txt'
         with open(output_file_path, 'w') as output_file:
-            output_file.write("Tiempo\tPorcentaje Motor 1\tPorcentaje Motor 2\tPeso (g)\n")
+            output_file.write("Tiempo\t PWM \t Velocidad \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
 
@@ -222,20 +222,14 @@ def control_motores_y_medicion():
                 
                 # # Registrar los datos en el archivo
                 t = time.time() - start_time
-                output_file.write("Tiempo:")
-                output_file.write(str(t))
-                output_file.write(", PWM_1:")
-                output_file.write(str(motor1_speed))
-                output_file.write(", PWM_2:")
-                output_file.write(str(motor2_speed))
-                output_file.write(", Velocidad_M1:")
-                output_file.write(str(RPM))
-                output_file.write(", Velocidad_M2:")
-                output_file.write(str(RPM2))
-                output_file.write(", Peso(g):")
-                output_file.write("%.2f"%(peso_actual))
-                output_file.write(", Voltaje_1:%.2f"%(v1))
-                output_file.write(", Voltaje_2:%.2f"%(v2))
+                output_file.write(str(t)+"\t")
+                output_file.write(str(motor1_speed)+"\t")
+                # output_file.write(str(motor2_speed)+"\t")
+                output_file.write(str(RPM)+"\t")
+                # output_file.write(str(RPM2)+"\t")
+                output_file.write("%.2f"%(peso_actual)+"\t")
+                output_file.write("%.2f"%(v1)+"\t")
+                # output_file.write("%.2f"%(v2)+"\t")
                 output_file.write("\n")
 
                 output_file.flush()  # Asegurarse de guardar los datos
