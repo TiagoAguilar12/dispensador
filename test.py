@@ -234,7 +234,7 @@ def control_motores_y_medicion():
 
                 output_file.flush()  # Asegurarse de guardar los datos
 
-                time.sleep(0.05)
+                time.sleep(0.5)
             
             # Deshabilitar motores
             pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
