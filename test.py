@@ -181,7 +181,7 @@ def control_motores_y_medicion():
             output_file.write("Tiempo\t PWM \t Velocidad \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
-            while time.time() - start_time <= 30:  # Ejecutar durante 30 segundos
+            while time.time() - start_time <= 120:  # Ejecutar durante 30 segundos
                 line1 = lines[current_line1].strip()
                 line2 = lines[current_line2].strip()
 
