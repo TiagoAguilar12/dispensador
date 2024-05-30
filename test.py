@@ -1,6 +1,7 @@
 # -- coding: utf-8 --
 #!/usr/bin/env python3
 import time
+import threading
 import pigpio
 from hx711 import HX711  # Importar la clase HX711
 import RPi.GPIO as GPIO  # Importar GPIO para la galga
@@ -22,7 +23,7 @@ PIN_ENCODER_B = 17
 PIN_ENCODER2_A = 16
 PIN_ENCODER2_B = 19
 
-INTERVALO = 0.5 # Intervalo de tiempo en segundos
+INTERVALO = 0.5  # Intervalo de tiempo en segundos para cálculo de RPM
 
 # Contadores de flancos
 numero_flancos_A = 0
@@ -41,7 +42,6 @@ RPS2 = 0.0
 RPM2 = 0.0
 
 # Variable Voltaje
-
 v1 = 0.0
 v2 = 0.0
 
@@ -118,8 +118,7 @@ def calibrar_galga():
             value = float(known_weight_grams)
             print(value, 'gramos')
         except ValueError:
-            print('Entero o flotante esperado y tengo:',
-                  known_weight_grams)
+            print('Entero o flotante esperado y tengo:', known_weight_grams)
         # Calcular la relación de escala para el canal A y ganancia 128
         ratio = reading / value
         hx.set_scale_ratio(ratio)
@@ -130,13 +129,35 @@ def calibrar_galga():
     print(hx.get_weight_mean(20))
     print('Iniciando la medición y control de los motores.')
 
+# Función para calcular las RPM en un intervalo fijo
+def calcular_rpm():
+    global numero_flancos_A, numero_flancos_B, tiempo_anterior, numero_flancos_A2, numero_flancos_B2, tiempo_anterior2, RPM, RPM2, RPS, RPS2
+    
+    while True:
+        time.sleep(INTERVALO)
+        
+        # Calcular RPM para el motor 1
+        flancos_totales_1 = numero_flancos_A + numero_flancos_B
+        RPS = flancos_totales_1 / 1200.0
+        RPM = RPS * 60.0
+        
+        # Calcular RPM para el motor 2
+        flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
+        RPS2 = flancos_totales_2 / 1200.0
+        RPM2 = RPS2 * 60.0
+        
+        # Restablecer contadores
+        numero_flancos_A = 0
+        numero_flancos_B = 0
+        numero_flancos_A2 = 0
+        numero_flancos_B2 = 0
+        
+        print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
+        print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
+
 # Función para el control de los motores y medición del peso
 def control_motores_y_medicion():
-    global numero_flancos_A, numero_flancos_B, tiempo_anterior, numero_flancos_A2, numero_flancos_B2, tiempo_anterior2, peso_actual, RPM, RPM2,v1,v2
-    
-    # Inicialización de tiempos
-    tiempo_anterior = time.time()
-    tiempo_anterior2 = time.time()
+    global peso_actual, v1, v2
     
     # Habilitar motores
     pi.write(motor1_en_pin, 1)
@@ -160,12 +181,7 @@ def control_motores_y_medicion():
             output_file.write("Tiempo\t PWM \t Velocidad \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
-
-
             while time.time() - start_time <= 30:  # Ejecutar durante 30 segundos
-                tiempo_actual = time.time()
-                tiempo_actual2 = tiempo_actual
-
                 line1 = lines[current_line1].strip()
                 line2 = lines[current_line2].strip()
 
@@ -181,68 +197,25 @@ def control_motores_y_medicion():
                 current_line1 = (current_line1 + 1) % total_lines
                 current_line2 = (current_line2 + 1) % total_lines
 
-                # # Imprimir velocidades de los motores
-                # print('Velocidad motor 1:', motor1_speed)
-                # print('Velocidad motor 2:', motor2_speed)
+                peso_actual = hx.get_weight_mean(20)
+                v1 = (0.0867 * motor1_speed) + 0.00898
+                v2 = (0.0866 * motor2_speed) + 0.00967
 
-                # Calcular RPS y RPM usando flancos contados
+                print("El peso actual en gramos es de %.2f" % (peso_actual))
+                print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1, v2))
 
-                tiempo_pasado = tiempo_actual - tiempo_anterior
-                tiempo_pasado2 = tiempo_actual2 - tiempo_anterior2
-
-                if tiempo_pasado >= INTERVALO:
-                    # Calcular RPS y RPM para el motor 1
-                    RPS = (numero_flancos_A + numero_flancos_B) / 1200.0
-                    RPM = RPS * 60.0
-                    
-                    print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
-
-                    # Calcular RPS y RPM para el motor 2
-                    RPS2 = (numero_flancos_A2 + numero_flancos_B2) / 1200.0
-                    RPM2 = RPS2 * 60.0
-                    
-                    print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
-                    print("Flancos A ", numero_flancos_A)
-                    print("Flancos B ", numero_flancos_B)
-                    print("rps", RPS)
-
-                    
-
-                    peso_actual = hx.get_weight_mean(20)
-
-                    print("El peso actual en gramos es de %.2f" % (peso_actual))
-
-                    v1 = (0.0867*motor1_speed)+0.00898
-                    v2 = (0.0866*motor2_speed)+0.00967
-
-                    print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1,v2))
-
-
-                    # Restablecer contadores
-                    numero_flancos_B = 0
-                    numero_flancos_A = 0
-                    tiempo_anterior = tiempo_actual
-                    numero_flancos_B2 = 0
-                    numero_flancos_A2 = 0
-                    tiempo_anterior2 = tiempo_actual2
-                
-                # # Registrar los datos en el archivo
+                # Registrar los datos en el archivo
                 t = time.time() - start_time
-                output_file.write(str(t)+"\t")
-                output_file.write(str(motor1_speed)+"\t")
-                # output_file.write(str(motor2_speed)+"\t")
-                output_file.write(str(RPM)+"\t")
-                # output_file.write(str(RPM2)+"\t")
-                output_file.write("%.2f"%(peso_actual)+"\t")
-                output_file.write("%.2f"%(v1)+"\t")
-                # output_file.write("%.2f"%(v2)+"\t")
+                output_file.write(str(t) + "\t")
+                output_file.write(str(motor1_speed) + "\t")
+                output_file.write(str(RPM) + "\t")
+                output_file.write("%.2f" % (peso_actual) + "\t")
+                output_file.write("%.2f" % (v1) + "\t")
                 output_file.write("\n")
 
                 output_file.flush()  # Asegurarse de guardar los datos
-                time.sleep(0.5)
+                time.sleep(0.1)
 
-                
-            
             # Deshabilitar motores
             pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
             pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
@@ -254,8 +227,11 @@ def control_motores_y_medicion():
             pi.stop()
             print('Tiempo de funcionamiento de los motores completado.')
 
-
 # Ejecutar la función de calibración de la galga
 calibrar_galga()
-# Funcion motores
+
+# Iniciar el hilo para calcular RPM en intervalos fijos
+threading.Thread(target=calcular_rpm, daemon=True).start()
+
+# Ejecutar el control de motores y medición
 control_motores_y_medicion()
