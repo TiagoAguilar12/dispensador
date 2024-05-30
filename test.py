@@ -22,7 +22,7 @@ PIN_ENCODER_B = 17
 PIN_ENCODER2_A = 16
 PIN_ENCODER2_B = 19
 
-INTERVALO = 0.1 # Intervalo de tiempo en segundos
+INTERVALO = 0.5 # Intervalo de tiempo en segundos
 
 # Contadores de flancos
 numero_flancos_A = 0
@@ -124,7 +124,7 @@ def calibrar_galga():
         ratio = reading / value
         hx.set_scale_ratio(ratio)
         print('Galga calibrada.')
-        time.sleep(15)
+        time.sleep(10)
 
     
     print(hx.get_weight_mean(20))
@@ -203,8 +203,8 @@ def control_motores_y_medicion():
                     
                     print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
                     print("Flancos A ", numero_flancos_A)
-                    print("Flancos A ", numero_flancos_B)
-                    print("Flancos A ", RPS)
+                    print("Flancos B ", numero_flancos_B)
+                    print("rps", RPS)
 
                     
 
@@ -239,7 +239,7 @@ def control_motores_y_medicion():
                 output_file.write("\n")
 
                 output_file.flush()  # Asegurarse de guardar los datos
-                time.sleep(0.1)
+                time.sleep(0.5)
 
                 
             
