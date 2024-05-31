@@ -2,9 +2,9 @@
 #!/usr/bin/env python3
 import time
 import threading
-import pigpio
+import pigpio # type: ignore
 from hx711 import HX711  # Importar la clase HX711
-import RPi.GPIO as GPIO  # Importar GPIO para la galga
+import RPi.GPIO as GPIO  # type: ignore # Importar GPIO para la galga
 
 
 # Inicialización de Pigpio
