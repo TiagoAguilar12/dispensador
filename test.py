@@ -188,7 +188,6 @@ def control_motores_y_medicion():
 
                 # Calcular RPM para el motor 2
                 flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
-                flancos_totales_2 > 0:
                 RPS2 = flancos_totales_2 / (1200.0 )
                 W2 = RPS2 * ((2 * pi_m) / INTERVALO)
                 RPM2 = W2 * (30 / pi_m)
