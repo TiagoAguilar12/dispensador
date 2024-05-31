@@ -173,21 +173,6 @@ def control_motores_y_medicion():
                 current_line1 = (current_line1 + 1) % total_lines
                 current_line2 = (current_line2 + 1) % total_lines
 
-                # # Calcular RPM para el motor 1
-                # flancos_totales_1 = numero_flancos_A + numero_flancos_B
-                # RPS = flancos_totales_1 / 1200.0
-                # RPM = RPS * 60.0
-
-                # # Calcular RPM para el motor 2
-                # flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
-                # RPS2 = flancos_totales_2 / 1200.0
-                # RPM2 = RPS2 * 60.0
-
-                # Restablecer contadores
-                # numero_flancos_A = 0
-                # numero_flancos_B = 0
-                # numero_flancos_A2 = 0
-                # numero_flancos_B2 = 0
 
                 # Medir peso
                 peso_actual = hx.get_weight_mean(20)
@@ -211,7 +196,7 @@ def control_motores_y_medicion():
                 RPS = flancos_totales_1 / 1200.0
                 W = RPS*((2*pi_m)/INTERVALO)
                 RPM= W* (30/pi_m)
-
+                print("numero de flancos totales", flancos_totales_1)
                 # Calcular RPM para el motor 2
                 flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
                 RPS2 = flancos_totales_2 / 1200.0
