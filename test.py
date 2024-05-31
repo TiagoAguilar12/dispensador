@@ -181,7 +181,7 @@ def control_motores_y_medicion():
                 flancos_totales_1 = numero_flancos_A + numero_flancos_B
                 if flancos_totales_1 > 0:
                     RPS = flancos_totales_1 / (1200.0 )
-                    W = RPS * ((2 * pi_m) /toc)
+                    W = RPS * ((2 * pi_m) /INTERVALO)
                     RPM = W * (30 / pi_m)
                 else:
                     RPM = 0
