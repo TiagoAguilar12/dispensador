@@ -8,7 +8,7 @@ import math
 
 # Inicialización de Pigpio
 pi = pigpio.pi()
-pi_m=math.pi
+pi_m = math.pi
 
 # Configuración de pines de motor y encoder
 motor1_pwm_pin = 12
@@ -149,25 +149,8 @@ def control_motores_y_medicion():
             output_file.write("Tiempo\t PWM \t Velocidad \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
-
-            numero_flancos_A = 0
-            numero_flancos_B = 0
-            numero_flancos_A2 = 0
-            numero_flancos_B2 = 0
-            flancos_totales_1=0
-            flancos_totales_2=0
-
-            while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
+            while time.time() - start_time <= 120:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
-                numero_flancos_A = 0
-                numero_flancos_B = 0
-                numero_flancos_A2 = 0
-                numero_flancos_B2 = 0
-                flancos_totales_1=0
-                flancos_totales_2=0
-                elapsed_time=0
-                toc=0
-
                 loop_start_time = time.time()
                 
                 # Obtener velocidades de los motores
@@ -177,8 +160,8 @@ def control_motores_y_medicion():
                 motor2_speed = int(line2)
 
                 # Controlar los motores con las velocidades especificadas
-                control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
-                control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
+                control_motor(motor1_pwm_pin, motor1_dir_pin, 60, 'forward')
+                control_motor(motor2_pwm_pin, motor2_dir_pin, 60, 'forward')
 
                 # Avanzar en las líneas circularmente
                 current_line1 = (current_line1 + 1) % total_lines
@@ -190,16 +173,6 @@ def control_motores_y_medicion():
                 # Calcular voltajes
                 v1 = (0.0867 * motor1_speed) + 0.00898
                 v2 = (0.0866 * motor2_speed) + 0.00967
-
-                # Imprimir valores
-                print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
-                print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
-                print("El peso actual en gramos es de %.2f" % (peso_actual))
-                print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1, v2))
-
-                # Controlar el tiempo de muestreo
-            
-                
 
                 # Calcular RPM para el motor 1
                 flancos_totales_1 = numero_flancos_A + numero_flancos_B
@@ -217,8 +190,6 @@ def control_motores_y_medicion():
                 numero_flancos_B = 0
                 numero_flancos_A2 = 0
                 numero_flancos_B2 = 0
-                flancos_totales_1=0
-                flancos_totales_2=0
 
                 # Registrar los datos en el archivo
                 t = time.time() - start_time
@@ -226,7 +197,7 @@ def control_motores_y_medicion():
                 output_file.write(str(motor1_speed) + "\t")
                 output_file.write(str(RPM) + "\t")
                 output_file.write("%.2f" % (peso_actual) + "\t")
-                output_file.write("%.2f" % (v2) + "\t")
+                output_file.write("%.2f" % (v1) + "\t")
                 output_file.write("\n")
 
                 output_file.flush()  # Asegurarse de guardar los datos
