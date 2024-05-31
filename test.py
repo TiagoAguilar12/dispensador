@@ -156,6 +156,11 @@ def control_motores_y_medicion():
             numero_flancos_B2 = 0
 
             while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
+                
+                numero_flancos_A = 0
+                numero_flancos_B = 0
+                numero_flancos_A2 = 0
+                numero_flancos_B2 = 0
                 # Controlar el tiempo de muestreo
                 loop_start_time = time.time()
                 
@@ -197,6 +202,7 @@ def control_motores_y_medicion():
                 W = RPS*((2*pi_m)/INTERVALO)
                 RPM= W* (30/pi_m)
                 print("numero de flancos totales", flancos_totales_1)
+                
                 # Calcular RPM para el motor 2
                 flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
                 RPS2 = flancos_totales_2 / 1200.0
@@ -217,7 +223,14 @@ def control_motores_y_medicion():
                 output_file.write("%.2f" % (v2) + "\t")
                 output_file.write("\n")
 
+
                 output_file.flush()  # Asegurarse de guardar los datos
+
+                
+                numero_flancos_A = 0
+                numero_flancos_B = 0
+                numero_flancos_A2 = 0
+                numero_flancos_B2 = 0
                 
                 elapsed_time = time.time() - loop_start_time
                 toc=  abs(INTERVALO - elapsed_time)
