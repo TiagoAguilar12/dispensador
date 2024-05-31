@@ -147,12 +147,12 @@ def control_motores_y_medicion():
         start_time = time.time()
 
         # Crear el archivo de salida para guardar los datos
-        output_file_path = '/home/santiago/Documents/dispensador/dispensador/resultadosM2_Rojo.txt'
+        output_file_path = '/home/santiago/Documents/dispensador/dispensador/resultadosM1_Blanco.txt'
         with open(output_file_path, 'w') as output_file:
-            output_file.write("Tiempo\t PWM \t Velocidad \tPeso (g)\t Voltaje \n")
+            output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
-            while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
+            while time.time() - start_time <= 120:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
                 loop_start_time = t1.tic()
                 
@@ -163,8 +163,8 @@ def control_motores_y_medicion():
                 motor2_speed = int(line2)
 
                 # Controlar los motores con las velocidades especificadas
-                control_motor(motor1_pwm_pin, motor1_dir_pin, 60, 'forward')
-                control_motor(motor2_pwm_pin, motor2_dir_pin, 60, 'forward')
+                control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
+                control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
 
                 # Avanzar en las líneas circularmente
                 current_line1 = (current_line1 + 1) % total_lines
@@ -206,7 +206,7 @@ def control_motores_y_medicion():
 
                 # Registrar los datos en el archivo
                 t = time.time() - start_time
-                output_file.write(f"{t}\t{motor1_speed}\t{RPM}\t{peso_actual:.2f}\t{v2:.2f}\n")
+                output_file.write(f"{t}\t{motor1_speed}\t{W}\t{RPM}\t{peso_actual:.2f}\t{v2:.2f}\n")
                 output_file.flush()  # Asegurarse de guardar los datos
 
                 # Restablecer contadores
