@@ -242,6 +242,11 @@ def control_motores_y_medicion():
                 
                 elapsed_time = time.time() - loop_start_time
                 toc=  abs(INTERVALO - elapsed_time)
+
+                numero_flancos_A = 0
+                numero_flancos_B = 0
+                numero_flancos_A2 = 0
+                numero_flancos_B2 = 0
                 
 
                 time.sleep(toc)
