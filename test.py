@@ -162,7 +162,6 @@ def control_motores_y_medicion():
                 numero_flancos_B2 = 0
                 loop_start_time=0
                 elapsed_time=0
-                toc=0
                 # Controlar el tiempo de muestreo
                 loop_start_time = time.time()
                 
@@ -180,6 +179,22 @@ def control_motores_y_medicion():
                 current_line1 = (current_line1 + 1) % total_lines
                 current_line2 = (current_line2 + 1) % total_lines
 
+                # # Calcular RPM para el motor 1
+                # flancos_totales_1 = numero_flancos_A + numero_flancos_B
+                # RPS = flancos_totales_1 / 1200.0
+                # RPM = RPS * 60.0
+
+                # # Calcular RPM para el motor 2
+                # flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
+                # RPS2 = flancos_totales_2 / 1200.0
+                # RPM2 = RPS2 * 60.0
+
+                # Restablecer contadores
+                # numero_flancos_A = 0
+                # numero_flancos_B = 0
+                # numero_flancos_A2 = 0
+                # numero_flancos_B2 = 0
+
                 # Medir peso
                 peso_actual = hx.get_weight_mean(20)
 
@@ -187,11 +202,11 @@ def control_motores_y_medicion():
                 v1 = (0.0867 * motor1_speed) + 0.00898
                 v2 = (0.0866 * motor2_speed) + 0.00967
 
-                # # Imprimir valores
-                # print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
-                # print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
-                # print("El peso actual en gramos es de %.2f" % (peso_actual))
-                # print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1, v2))
+                # Imprimir valores
+                print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
+                print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
+                print("El peso actual en gramos es de %.2f" % (peso_actual))
+                print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1, v2))
 
                 # Controlar el tiempo de muestreo
             
