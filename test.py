@@ -221,7 +221,7 @@ def control_motores_y_medicion():
                 numero_flancos_B2 = 0
                 
                 # Controlar el tiempo de muestreo
-                elapsed_time = t1.toc()
+                elapsed_time = float(t1.toc())
                 toc=abs(INTERVALO - elapsed_time)
                 print(elapsed_time)
                 print(toc)
