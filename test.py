@@ -181,29 +181,25 @@ def control_motores_y_medicion():
                 
 
                 flancos_totales_1 = numero_flancos_A + numero_flancos_B
-                if flancos_totales_1 > 0:
-                    RPS = flancos_totales_1 / (1200.0 )
-                    W = RPS * ((2 * pi_m) /INTERVALO)
-                    RPM = W * (30 / pi_m)
-                else:
-                    RPM = 0
+            
+                RPS = flancos_totales_1 / (1200.0 )
+                W = RPS * ((2* pi_m) /INTERVALO)
+                RPM = W * (30 / pi_m)
 
                 # Calcular RPM para el motor 2
                 flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
-                if flancos_totales_2 > 0:
-                    RPS2 = flancos_totales_2 / (1200.0 )
-                    W2 = RPS2 * ((2 * pi_m) / INTERVALO)
-                    RPM2 = W2 * (30 / pi_m)
-                else:
-                    RPM2 = 0
+                flancos_totales_2 > 0:
+                RPS2 = flancos_totales_2 / (1200.0 )
+                W2 = RPS2 * ((2 * pi_m) / INTERVALO)
+                RPM2 = W2 * (30 / pi_m)
 
                 # Imprimir valores
-                # print(numero_flancos_A)
-                # print(numero_flancos_A2)
-                # print(numero_flancos_B)
-                # print(numero_flancos_B2)
-                # print(flancos_totales_1)
-                # print(flancos_totales_2)
+                print(numero_flancos_A)
+                print(numero_flancos_A2)
+                print(numero_flancos_B)
+                print(numero_flancos_B2)
+                print(flancos_totales_1)
+                print(flancos_totales_2)
                 print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
                 print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
                 print("El peso actual en gramos es de %.2f" % (peso_actual))
