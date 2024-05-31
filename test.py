@@ -175,8 +175,7 @@ def control_motores_y_medicion():
                 v2 = (0.0866 * motor2_speed) + 0.00967
 
                 # Calcular RPM para el motor 1
-                elapsed_time = time.time() - loop_start_time
-                toc=abs(INTERVALO - elapsed_time)
+                
 
                 flancos_totales_1 = numero_flancos_A + numero_flancos_B
                 if flancos_totales_1 > 0:
@@ -196,12 +195,12 @@ def control_motores_y_medicion():
                     RPM2 = 0
 
                 # Imprimir valores
-                print(numero_flancos_A)
-                print(numero_flancos_A2)
-                print(numero_flancos_B)
-                print(numero_flancos_B2)
-                print(flancos_totales_1)
-                print(flancos_totales_2)
+                # print(numero_flancos_A)
+                # print(numero_flancos_A2)
+                # print(numero_flancos_B)
+                # print(numero_flancos_B2)
+                # print(flancos_totales_1)
+                # print(flancos_totales_2)
                 print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
                 print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
                 print("El peso actual en gramos es de %.2f" % (peso_actual))
@@ -219,8 +218,9 @@ def control_motores_y_medicion():
                 numero_flancos_B2 = 0
                 
                 # Controlar el tiempo de muestreo
-                
-                
+                elapsed_time = time.time() - loop_start_time
+                toc=abs(INTERVALO - elapsed_time)
+                print(toc)
                 time.sleep(toc)
 
             # Deshabilitar motores
