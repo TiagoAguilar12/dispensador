@@ -235,7 +235,7 @@ def control_motores_y_medicion():
                 output_file.flush()  # Asegurarse de guardar los datos
                 
                 elapsed_time = time.time() - loop_start_time
-                toc=  INTERVALO - elapsed_time
+                toc=  abs(INTERVALO - elapsed_time)
                 
 
                 time.sleep(toc)
