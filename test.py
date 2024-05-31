@@ -150,17 +150,11 @@ def control_motores_y_medicion():
 
             # Bucle principal
 
-            numero_flancos_A = 0
-            numero_flancos_B = 0
-            numero_flancos_A2 = 0
-            numero_flancos_B2 = 0
-
             while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
+                elapsed_time=0
+                toc=0
+                loop_start_time=0
                 
-                numero_flancos_A = 0
-                numero_flancos_B = 0
-                numero_flancos_A2 = 0
-                numero_flancos_B2 = 0
                 # Controlar el tiempo de muestreo
                 loop_start_time = time.time()
                 
