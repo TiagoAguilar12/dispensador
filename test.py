@@ -175,10 +175,13 @@ def control_motores_y_medicion():
                 v2 = (0.0866 * motor2_speed) + 0.00967
 
                 # Calcular RPM para el motor 1
+                elapsed_time = time.time() - loop_start_time
+                toc=abs(INTERVALO - elapsed_time)
+                
                 flancos_totales_1 = numero_flancos_A + numero_flancos_B
                 if flancos_totales_1 > 0:
                     RPS = flancos_totales_1 / (1200.0 )
-                    W = RPS * ((2 * pi_m) / INTERVALO)
+                    W = RPS * ((2 * pi_m) /toc)
                     RPM = W * (30 / pi_m)
                 else:
                     RPM = 0
@@ -212,8 +215,7 @@ def control_motores_y_medicion():
                 numero_flancos_B2 = 0
                 
                 # Controlar el tiempo de muestreo
-                elapsed_time = time.time() - loop_start_time
-                toc=abs(INTERVALO - elapsed_time)
+                
                 print(toc)
                 time.sleep(toc)
 
