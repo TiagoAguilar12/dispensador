@@ -146,7 +146,7 @@ def control_motores_y_medicion():
         # Crear el archivo de salida para guardar los datos
         output_file_path = '/home/santiago/Documents/dispensador/dispensador/resultadosM2_Rojo.txt'
         with open(output_file_path, 'w') as output_file:
-            output_file.write("Tiempo\t PWM \t Velocidad \tPeso (g)\t Voltaje \n")
+            output_file.write("Tiempo\t PWM \t Velocidad angular\t RPM \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
 
@@ -179,7 +179,7 @@ def control_motores_y_medicion():
                 # Avanzar en las líneas circularmente
                 current_line1 = (current_line1 + 1) % total_lines
                 current_line2 = (current_line2 + 1) % total_lines
-                
+
                 # Medir peso
                 peso_actual = hx.get_weight_mean(20)
 
@@ -187,11 +187,11 @@ def control_motores_y_medicion():
                 v1 = (0.0867 * motor1_speed) + 0.00898
                 v2 = (0.0866 * motor2_speed) + 0.00967
 
-                # Imprimir valores
-                print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
-                print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
-                print("El peso actual en gramos es de %.2f" % (peso_actual))
-                print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1, v2))
+                # # Imprimir valores
+                # print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
+                # print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
+                # print("El peso actual en gramos es de %.2f" % (peso_actual))
+                # print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1, v2))
 
                 # Controlar el tiempo de muestreo
             
@@ -218,9 +218,10 @@ def control_motores_y_medicion():
                 t = time.time() - start_time
                 output_file.write(str(t) + "\t")
                 output_file.write(str(motor1_speed) + "\t")
+                output_file.write(str(W) + "\t")
                 output_file.write(str(RPM) + "\t")
                 output_file.write("%.2f" % (peso_actual) + "\t")
-                output_file.write("%.2f" % (v2) + "\t")
+                output_file.write("%.2f" % (v1) + "\t")
                 output_file.write("\n")
 
                 output_file.flush()  # Asegurarse de guardar los datos
