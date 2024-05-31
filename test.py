@@ -149,7 +149,12 @@ def control_motores_y_medicion():
             output_file.write("Tiempo\t PWM \t Velocidad \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
-            while time.time() - start_time <= 120:  # Ejecutar durante 120 segundos
+            numero_flancos_A = 0
+            numero_flancos_B = 0
+            numero_flancos_A2 = 0
+            numero_flancos_B2 = 0
+
+            while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
                 loop_start_time = time.time()
                 
@@ -160,8 +165,8 @@ def control_motores_y_medicion():
                 motor2_speed = int(line2)
 
                 # Controlar los motores con las velocidades especificadas
-                control_motor(motor1_pwm_pin, motor1_dir_pin, 60, 'forward')
-                control_motor(motor2_pwm_pin, motor2_dir_pin, 60, 'forward')
+                control_motor(motor1_pwm_pin, motor1_dir_pin, 40, 'forward')
+                control_motor(motor2_pwm_pin, motor2_dir_pin, 40, 'forward')
 
                 # Avanzar en las líneas circularmente
                 current_line1 = (current_line1 + 1) % total_lines
