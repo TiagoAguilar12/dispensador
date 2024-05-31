@@ -156,6 +156,13 @@ def control_motores_y_medicion():
             numero_flancos_B2 = 0
 
             while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
+                numero_flancos_A = 0
+                numero_flancos_B = 0
+                numero_flancos_A2 = 0
+                numero_flancos_B2 = 0
+                loop_start_time=0
+                elapsed_time=0
+                toc=0
                 # Controlar el tiempo de muestreo
                 loop_start_time = time.time()
                 
@@ -172,23 +179,7 @@ def control_motores_y_medicion():
                 # Avanzar en las líneas circularmente
                 current_line1 = (current_line1 + 1) % total_lines
                 current_line2 = (current_line2 + 1) % total_lines
-
-                # # Calcular RPM para el motor 1
-                # flancos_totales_1 = numero_flancos_A + numero_flancos_B
-                # RPS = flancos_totales_1 / 1200.0
-                # RPM = RPS * 60.0
-
-                # # Calcular RPM para el motor 2
-                # flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
-                # RPS2 = flancos_totales_2 / 1200.0
-                # RPM2 = RPS2 * 60.0
-
-                # Restablecer contadores
-                # numero_flancos_A = 0
-                # numero_flancos_B = 0
-                # numero_flancos_A2 = 0
-                # numero_flancos_B2 = 0
-
+                
                 # Medir peso
                 peso_actual = hx.get_weight_mean(20)
 
@@ -218,10 +209,10 @@ def control_motores_y_medicion():
                 W2 =RPS2*((2*pi_m)/INTERVALO)
                 RPM2= W* (30/pi_m)
 
-                numero_flancos_A = 0
-                numero_flancos_B = 0
-                numero_flancos_A2 = 0
-                numero_flancos_B2 = 0
+                # numero_flancos_A = 0
+                # numero_flancos_B = 0
+                # numero_flancos_A2 = 0
+                # numero_flancos_B2 = 0
 
                 # Registrar los datos en el archivo
                 t = time.time() - start_time
