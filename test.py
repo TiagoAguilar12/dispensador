@@ -154,9 +154,18 @@ def control_motores_y_medicion():
             numero_flancos_B = 0
             numero_flancos_A2 = 0
             numero_flancos_B2 = 0
+            flancos_totales_1=0
+            flancos_totales_2=0
 
             while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
+                numero_flancos_A = 0
+                numero_flancos_B = 0
+                numero_flancos_A2 = 0
+                numero_flancos_B2 = 0
+                flancos_totales_1=0
+                flancos_totales_2=0
+
                 loop_start_time = time.time()
                 
                 # Obtener velocidades de los motores
@@ -222,6 +231,8 @@ def control_motores_y_medicion():
                 numero_flancos_B = 0
                 numero_flancos_A2 = 0
                 numero_flancos_B2 = 0
+                flancos_totales_1=0
+                flancos_totales_2=0
 
                 # Registrar los datos en el archivo
                 t = time.time() - start_time
