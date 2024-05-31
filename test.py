@@ -5,10 +5,13 @@ import pigpio
 from hx711 import HX711  # Importar la clase HX711
 import RPi.GPIO as GPIO  # Importar GPIO para la galga
 import math
+from pytictoc import TicToc
 
 # Inicialización de Pigpio
 pi = pigpio.pi()
 pi_m = math.pi
+
+t1 = TicToc()
 
 # Configuración de pines de motor y encoder
 motor1_pwm_pin = 12
@@ -151,7 +154,7 @@ def control_motores_y_medicion():
             # Bucle principal
             while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
-                loop_start_time = time.time()
+                loop_start_time = t1.tic()
                 
                 # Obtener velocidades de los motores
                 line1 = lines[current_line1].strip()
@@ -218,8 +221,9 @@ def control_motores_y_medicion():
                 numero_flancos_B2 = 0
                 
                 # Controlar el tiempo de muestreo
-                elapsed_time = time.time() - loop_start_time
+                elapsed_time = t1.toc()
                 toc=abs(INTERVALO - elapsed_time)
+                print(elapsed_time)
                 print(toc)
                 time.sleep(toc)
 
