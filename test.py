@@ -213,7 +213,9 @@ def control_motores_y_medicion():
                 
                 # Controlar el tiempo de muestreo
                 elapsed_time = time.time() - loop_start_time
-                time.sleep(max(0, INTERVALO - elapsed_time))
+                toc=abs(INTERVALO - elapsed_time)
+                print(toc)
+                time.sleep(toc)
 
             # Deshabilitar motores
             pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
