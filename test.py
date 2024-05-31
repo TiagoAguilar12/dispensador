@@ -149,12 +149,7 @@ def control_motores_y_medicion():
             output_file.write("Tiempo\t PWM \t Velocidad \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
-            numero_flancos_A = 0
-            numero_flancos_B = 0
-            numero_flancos_A2 = 0
-            numero_flancos_B2 = 0
-
-            while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
+            while time.time() - start_time <= 120:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
                 loop_start_time = time.time()
                 
@@ -165,8 +160,8 @@ def control_motores_y_medicion():
                 motor2_speed = int(line2)
 
                 # Controlar los motores con las velocidades especificadas
-                control_motor(motor1_pwm_pin, motor1_dir_pin, 40, 'forward')
-                control_motor(motor2_pwm_pin, motor2_dir_pin, 40, 'forward')
+                control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
+                control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
 
                 # Avanzar en las líneas circularmente
                 current_line1 = (current_line1 + 1) % total_lines
@@ -181,39 +176,42 @@ def control_motores_y_medicion():
 
                 # Calcular RPM para el motor 1
                 flancos_totales_1 = numero_flancos_A + numero_flancos_B
-                RPS = flancos_totales_1 / 1200.0
-                W = RPS*((2*pi_m)/INTERVALO)
-                RPM= W* (30/pi_m)
+                if flancos_totales_1 > 0:
+                    RPS = flancos_totales_1 / (1200.0 * INTERVALO)
+                    W = RPS * ((2 * pi_m) / INTERVALO)
+                    RPM = W * (30 / pi_m)
+                else:
+                    RPM = 0
 
                 # Calcular RPM para el motor 2
                 flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
-                RPS2 = flancos_totales_2 / 1200.0
-                W2 =RPS2*((2*pi_m)/INTERVALO)
-                RPM2= W* (30/pi_m)
+                if flancos_totales_2 > 0:
+                    RPS2 = flancos_totales_2 / (1200.0 * INTERVALO)
+                    W2 = RPS2 * ((2 * pi_m) / INTERVALO)
+                    RPM2 = W2 * (30 / pi_m)
+                else:
+                    RPM2 = 0
 
+                # Imprimir valores
+                print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
+                print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
+                print("El peso actual en gramos es de %.2f" % (peso_actual))
+                print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1, v2))
+
+                # Registrar los datos en el archivo
+                t = time.time() - start_time
+                output_file.write(f"{t}\t{motor1_speed}\t{RPM}\t{peso_actual:.2f}\t{v2:.2f}\n")
+                output_file.flush()  # Asegurarse de guardar los datos
+
+                # Restablecer contadores
                 numero_flancos_A = 0
                 numero_flancos_B = 0
                 numero_flancos_A2 = 0
                 numero_flancos_B2 = 0
-
-                # Registrar los datos en el archivo
-                t = time.time() - start_time
-                output_file.write(str(t) + "\t")
-                output_file.write(str(motor1_speed) + "\t")
-                output_file.write(str(RPM) + "\t")
-                output_file.write("%.2f" % (peso_actual) + "\t")
-                output_file.write("%.2f" % (v1) + "\t")
-                output_file.write("\n")
-
-                output_file.flush()  # Asegurarse de guardar los datos
                 
+                # Controlar el tiempo de muestreo
                 elapsed_time = time.time() - loop_start_time
-                toc=  abs(INTERVALO - elapsed_time)
-                
-
-                time.sleep(toc)
-
-               
+                time.sleep(max(0, INTERVALO - elapsed_time))
 
             # Deshabilitar motores
             pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
@@ -230,6 +228,3 @@ calibrar_galga()
 
 # Ejecutar el control de motores y medición
 control_motores_y_medicion()
-
-
-# Probando que se puede hacer commit desde mi pc
