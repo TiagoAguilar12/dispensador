@@ -234,7 +234,7 @@ def control_motores_y_medicion():
             print('Tiempo de funcionamiento de los motores completado.')
 
 # Ejecutar la función de calibración de la galga
-#calibrar_galga()
+calibrar_galga()
 
 # Ejecutar el control de motores y medición
 control_motores_y_medicion()
