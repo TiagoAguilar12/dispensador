@@ -150,11 +150,12 @@ def control_motores_y_medicion():
 
             # Bucle principal
 
-            while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
-                elapsed_time=0
-                toc=0
-                loop_start_time=0
-                
+            numero_flancos_A = 0
+            numero_flancos_B = 0
+            numero_flancos_A2 = 0
+            numero_flancos_B2 = 0
+
+            while time.time() - start_time <= 120:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
                 loop_start_time = time.time()
                 
@@ -172,6 +173,21 @@ def control_motores_y_medicion():
                 current_line1 = (current_line1 + 1) % total_lines
                 current_line2 = (current_line2 + 1) % total_lines
 
+                # # Calcular RPM para el motor 1
+                # flancos_totales_1 = numero_flancos_A + numero_flancos_B
+                # RPS = flancos_totales_1 / 1200.0
+                # RPM = RPS * 60.0
+
+                # # Calcular RPM para el motor 2
+                # flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
+                # RPS2 = flancos_totales_2 / 1200.0
+                # RPM2 = RPS2 * 60.0
+
+                # Restablecer contadores
+                # numero_flancos_A = 0
+                # numero_flancos_B = 0
+                # numero_flancos_A2 = 0
+                # numero_flancos_B2 = 0
 
                 # Medir peso
                 peso_actual = hx.get_weight_mean(20)
@@ -195,8 +211,7 @@ def control_motores_y_medicion():
                 RPS = flancos_totales_1 / 1200.0
                 W = RPS*((2*pi_m)/INTERVALO)
                 RPM= W* (30/pi_m)
-                print("numero de flancos totales", flancos_totales_1)
-                
+
                 # Calcular RPM para el motor 2
                 flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
                 RPS2 = flancos_totales_2 / 1200.0
@@ -217,17 +232,10 @@ def control_motores_y_medicion():
                 output_file.write("%.2f" % (v2) + "\t")
                 output_file.write("\n")
 
-
                 output_file.flush()  # Asegurarse de guardar los datos
-
-                
-                numero_flancos_A = 0
-                numero_flancos_B = 0
-                numero_flancos_A2 = 0
-                numero_flancos_B2 = 0
                 
                 elapsed_time = time.time() - loop_start_time
-                toc=  abs(INTERVALO - elapsed_time)
+                toc=  INTERVALO - elapsed_time
                 
 
                 time.sleep(toc)
