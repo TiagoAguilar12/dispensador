@@ -257,3 +257,6 @@ calibrar_galga()
 
 # Ejecutar el control de motores y medición
 control_motores_y_medicion()
+
+
+# Probando que se puede hacer commit desde mi pc
