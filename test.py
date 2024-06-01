@@ -219,9 +219,8 @@ def control_motores_y_medicion():
                 salto_linea =+ 1
                 # Controlar el tiempo de muestreo
                 
-                toc=abs(INTERVALO - elapsed_time)
-                print(elapsed_time)
-                print(toc)
+                # toc=abs(INTERVALO - elapsed_time)
+                # print(elapsed_time)
                 time.sleep(0.2)
 
             # Deshabilitar motores
