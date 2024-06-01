@@ -74,10 +74,10 @@ def contador_flancos_encoder_b2(gpio, level, tick):
     numero_flancos_B2 += 1
 
 # Configuración de callbacks
-cb1 = pi.callback(PIN_ENCODER_A, pigpio.EITHER_EDGE, contador_flancos_encoder)
-b2 = pi.callback(PIN_ENCODER_B, pigpio.EITHER_EDGE, contador_flancos_encoder_b)
-cb3 = pi.callback(PIN_ENCODER2_A, pigpio.EITHER_EDGE, contador_flancos_encoder2)
-cb4 = pi.callback(PIN_ENCODER2_B, pigpio.EITHER_EDGE, contador_flancos_encoder_b2)
+cb1 = pi.callback(PIN_ENCODER_A, pigpio.RISING_EDGE, contador_flancos_encoder)
+#b2 = pi.callback(PIN_ENCODER_B, pigpio.EITHER_EDGE, contador_flancos_encoder_b)
+cb3 = pi.callback(PIN_ENCODER2_A, pigpio.RISING_EDGE, contador_flancos_encoder2)
+#cb4 = pi.callback(PIN_ENCODER2_B, pigpio.EITHER_EDGE, contador_flancos_encoder_b2)
 
 # Función para controlar el motor
 def control_motor(pin_pwm, pin_dir, speed_percent, direction):
@@ -183,13 +183,13 @@ def control_motores_y_medicion():
                 # Calcular RPM para el motor 1
                 flancos_totales_1 = numero_flancos_A + numero_flancos_B
 
-                RPS = flancos_totales_1 / (1200.0 )
+                RPS = flancos_totales_1 / (600.0 )
                 W = RPS * ((2* pi_m) /INTERVALO)
                 RPM = W * (30 / pi_m)
 
                 # Calcular RPM para el motor 2
                 flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
-                RPS2 = flancos_totales_2 / (1200.0 )
+                RPS2 = flancos_totales_2 / (600.0 )
                 W2 = RPS2 * ((2 * pi_m) / INTERVALO)
                 RPM2 = W2 * (30 / pi_m)
 
