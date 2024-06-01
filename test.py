@@ -222,7 +222,7 @@ def control_motores_y_medicion():
                 toc=abs(INTERVALO - elapsed_time)
                 print(elapsed_time)
                 print(toc)
-                # time.sleep(toc)
+                time.sleep(toc)
 
             # Deshabilitar motores
             pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
