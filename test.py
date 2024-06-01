@@ -217,7 +217,7 @@ def control_motores_y_medicion():
                 numero_flancos_B = 0
                 numero_flancos_A2 = 0
                 numero_flancos_B2 = 0
-                salto_linea =+ 1
+                salto_linea = salto_linea+1
                 # Controlar el tiempo de muestreo
                 print(salto_linea)
                 elapsed_time = t1.tocvalue()
