@@ -129,7 +129,7 @@ def calibrar_galga():
 
 # Función principal para control de motores, cálculo de RPM y medición de peso
 def control_motores_y_medicion():
-    global numero_flancos_A, numero_flancos_B, numero_flancos_A2, numero_flancos_B2, RPM, RPM2, RPS, RPS2, peso_actual, v1, v2
+    global numero_flancos_A, numero_flancos_B, numero_flancos_A2, numero_flancos_B2, RPM, RPM2, RPS, RPS2, peso_actual, v1, v2, salto_linea
     
     # Habilitar motores
     pi.write(motor1_en_pin, 1)
