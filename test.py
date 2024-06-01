@@ -148,7 +148,7 @@ def control_motores_y_medicion():
         start_time = time.time()
 
         # Crear el archivo de salida para guardar los datos
-        output_file_path = '/home/santiago/Documents/dispensador/dispensador/resultadosM2_Rojo.txt'
+        output_file_path = '/home/santiago/Documents/dispensador/dispensador/resultadosM1_Blanco.txt'
         with open(output_file_path, 'w') as output_file:
             output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\t Voltaje \n")
 
@@ -208,7 +208,7 @@ def control_motores_y_medicion():
                 # Registrar los datos en el archivo
 
                 t = time.time() - start_time
-                output_file.write(f"{t}\t{motor2_speed}\t{W2}\t{RPM2}\t{peso_actual:.2f}\t{v2:.2f}\n")
+                output_file.write(f"{t}\t{motor1_speed}\t{W}\t{RPM}\t{peso_actual:.2f}\t{v1:.2f}\n")
                 output_file.flush()  # Asegurarse de guardar los datos
 
                 # Restablecer contadores
