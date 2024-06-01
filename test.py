@@ -170,6 +170,7 @@ def control_motores_y_medicion():
                 if salto_linea == 4:
                     current_line1 = (current_line1 + 1) % total_lines   
                     current_line2 = (current_line2 + 1) % total_lines
+                    salto_linea = 0
 
                 
                 # Medir peso
