@@ -74,9 +74,9 @@ def contador_flancos_encoder_b2(gpio, level, tick):
     numero_flancos_B2 += 1
 
 # Configuración de callbacks
-cb1 = pi.callback(PIN_ENCODER_A, pigpio.EITHER_EDGE, contador_flancos_encoder)
+cb1 = pi.callback(PIN_ENCODER_A, pigpio.RISING_EDGE, contador_flancos_encoder)
 # b2 = pi.callback(PIN_ENCODER_B, pigpio.RISING_EDGE, contador_flancos_encoder_b)
-cb3 = pi.callback(PIN_ENCODER2_A, pigpio.EITHER_EDGE, contador_flancos_encoder2)
+cb3 = pi.callback(PIN_ENCODER2_A, pigpio.RISING_EDGE, contador_flancos_encoder2)
 # cb4 = pi.callback(PIN_ENCODER2_B, pigpio.RISING_EDGE, contador_flancos_encoder_b2)
 
 # Función para controlar el motor
