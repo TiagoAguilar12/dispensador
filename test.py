@@ -12,6 +12,7 @@ pi = pigpio.pi()
 pi_m = math.pi
 
 t1 = TicToc()
+salto_linea = 0
 
 # Configuración de pines de motor y encoder
 motor1_pwm_pin = 12
@@ -26,7 +27,7 @@ PIN_ENCODER_B = 17
 PIN_ENCODER2_A = 16
 PIN_ENCODER2_B = 19
 
-INTERVALO = 0.3  # Intervalo de tiempo en segundos para cálculo de RPM
+INTERVALO = 0.2  # Intervalo de tiempo en segundos para cálculo de RPM
 
 # Contadores de flancos
 numero_flancos_A = 0
@@ -73,10 +74,10 @@ def contador_flancos_encoder_b2(gpio, level, tick):
     numero_flancos_B2 += 1
 
 # Configuración de callbacks
-cb1 = pi.callback(PIN_ENCODER_A, pigpio.EITHER_EDGE, contador_flancos_encoder)
-#b2 = pi.callback(PIN_ENCODER_B, pigpio.EITHER_EDGE, contador_flancos_encoder_b)
-cb3 = pi.callback(PIN_ENCODER2_A, pigpio.EITHER_EDGE, contador_flancos_encoder2)
-#cb4 = pi.callback(PIN_ENCODER2_B, pigpio.EITHER_EDGE, contador_flancos_encoder_b2)
+cb1 = pi.callback(PIN_ENCODER_A, pigpio.RISING_EDGE, contador_flancos_encoder)
+b2 = pi.callback(PIN_ENCODER_B, pigpio.RISING_EDGE, contador_flancos_encoder_b)
+cb3 = pi.callback(PIN_ENCODER2_A, pigpio.RISING_EDGE, contador_flancos_encoder2)
+cb4 = pi.callback(PIN_ENCODER2_B, pigpio.RISING_EDGE, contador_flancos_encoder_b2)
 
 # Función para controlar el motor
 def control_motor(pin_pwm, pin_dir, speed_percent, direction):
@@ -152,9 +153,8 @@ def control_motores_y_medicion():
             output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
-            while time.time() - start_time <= 120:  # Ejecutar durante 120 segundos
+            while time.time() - start_time <= 20:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
-                loop_start_time = t1.tic()
                 
                 # Obtener velocidades de los motores
                 line1 = lines[current_line1].strip()
@@ -167,21 +167,22 @@ def control_motores_y_medicion():
                 control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
 
                 # Avanzar en las líneas circularmente
-                current_line1 = (current_line1 + 1) % total_lines
-                current_line2 = (current_line2 + 1) % total_lines
+                if salto_linea == 4:
+                    current_line1 = (current_line1 + 1) % total_lines   
+                    current_line2 = (current_line2 + 1) % total_lines
 
+                loop_start_time = t1.tic()
                 # Medir peso
                 peso_actual = hx.get_weight_mean(20)
+                elapsed_time = t1.toc()
 
                 # Calcular voltajes
                 v1 = (0.0867 * motor1_speed) + 0.00898
                 v2 = (0.0866 * motor2_speed) + 0.00967
 
                 # Calcular RPM para el motor 1
-                
-
                 flancos_totales_1 = numero_flancos_A + numero_flancos_B
-            
+
                 RPS = flancos_totales_1 / (600.0 )
                 W = RPS * ((2* pi_m) /INTERVALO)
                 RPM = W * (30 / pi_m)
@@ -193,18 +194,19 @@ def control_motores_y_medicion():
                 RPM2 = W2 * (30 / pi_m)
 
                 # Imprimir valores
-                print(numero_flancos_A)
-                print(numero_flancos_A2)
-                print(numero_flancos_B)
-                print(numero_flancos_B2)
-                print(flancos_totales_1)
-                print(flancos_totales_2)
-                print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
-                print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
-                print("El peso actual en gramos es de %.2f" % (peso_actual))
-                print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1, v2))
+                # print(numero_flancos_A)
+                # print(numero_flancos_A2)
+                # print(numero_flancos_B)
+                # print(numero_flancos_B2)
+                # print(flancos_totales_1)
+                # print(flancos_totales_2)
+                # print("Revoluciones por segundo M1: {:.4f} | Revoluciones por minuto M1: {:.4f}".format(RPS, RPM))
+                # print("Revoluciones por segundo M2: {:.4f} | Revoluciones por minuto M2: {:.4f}".format(RPS2, RPM2))
+                # print("El peso actual en gramos es de %.2f" % (peso_actual))
+                # print("Voltaje motor 1: {:.2f} | Voltaje motor 2: {:.2f}".format(v1, v2))
 
                 # Registrar los datos en el archivo
+
                 t = time.time() - start_time
                 output_file.write(f"{t}\t{motor2_speed}\t{W2}\t{RPM2}\t{peso_actual:.2f}\t{v2:.2f}\n")
                 output_file.flush()  # Asegurarse de guardar los datos
@@ -214,13 +216,13 @@ def control_motores_y_medicion():
                 numero_flancos_B = 0
                 numero_flancos_A2 = 0
                 numero_flancos_B2 = 0
-                
+                salto_linea =+ 1
                 # Controlar el tiempo de muestreo
-                elapsed_time = t1.tocvalue()
+                
                 toc=abs(INTERVALO - elapsed_time)
                 print(elapsed_time)
                 print(toc)
-                time.sleep(toc)
+                time.sleep(0.2)
 
             # Deshabilitar motores
             pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
