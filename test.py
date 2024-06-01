@@ -153,7 +153,7 @@ def control_motores_y_medicion():
             output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
-            while time.time() - start_time <= 15:  # Ejecutar durante 120 segundos
+            while time.time() - start_time <= 100:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
                 loop_start_time = t1.tic()
                 # Obtener velocidades de los motores
@@ -219,11 +219,10 @@ def control_motores_y_medicion():
                 numero_flancos_B2 = 0
                 salto_linea = salto_linea+1
                 # Controlar el tiempo de muestreo
-                print(salto_linea)
                 elapsed_time = t1.tocvalue()
                 toc=abs(INTERVALO - elapsed_time)
-                print(elapsed_time)
-                print(toc)
+                # print(elapsed_time)
+                # print(toc)
                 time.sleep(toc)
 
             # Deshabilitar motores
