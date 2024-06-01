@@ -155,7 +155,7 @@ def control_motores_y_medicion():
             # Bucle principal
             while time.time() - start_time <= 20:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
-                
+                loop_start_time = t1.tic()
                 # Obtener velocidades de los motores
                 line1 = lines[current_line1].strip()
                 line2 = lines[current_line2].strip()
@@ -171,10 +171,10 @@ def control_motores_y_medicion():
                     current_line1 = (current_line1 + 1) % total_lines   
                     current_line2 = (current_line2 + 1) % total_lines
 
-                loop_start_time = t1.tic()
+                
                 # Medir peso
                 peso_actual = hx.get_weight_mean(20)
-                elapsed_time = t1.toc()
+                
 
                 # Calcular voltajes
                 v1 = (0.0867 * motor1_speed) + 0.00898
@@ -218,10 +218,11 @@ def control_motores_y_medicion():
                 numero_flancos_B2 = 0
                 salto_linea =+ 1
                 # Controlar el tiempo de muestreo
-                
-                # toc=abs(INTERVALO - elapsed_time)
-                # print(elapsed_time)
-                time.sleep(0.2)
+                elapsed_time = t1.tocvalue()
+                toc=abs(INTERVALO - elapsed_time)
+                print(elapsed_time)
+                print(toc)
+                time.sleep(toc)
 
             # Deshabilitar motores
             pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
