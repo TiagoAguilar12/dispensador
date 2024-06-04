@@ -6,7 +6,7 @@ from hx711 import HX711  # Importar la clase HX711
 import RPi.GPIO as GPIO  # Importar GPIO para la galga
 import math
 from pytictoc import TicToc
-
+#
 # Inicialización de Pigpio
 pi = pigpio.pi()
 pi_m = math.pi
