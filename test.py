@@ -27,7 +27,7 @@ PIN_ENCODER_B = 17
 PIN_ENCODER2_A = 16
 PIN_ENCODER2_B = 19
 
-INTERVALO = 0.3  # Intervalo de tiempo en segundos para cálculo de RPM
+INTERVALO = 0.5  # Intervalo de tiempo en segundos para cálculo de RPM
 
 # Contadores de flancos
 numero_flancos_A = 0
@@ -148,7 +148,7 @@ def control_motores_y_medicion():
         start_time = time.time()
 
         # Crear el archivo de salida para guardar los datos
-        output_file_path = '/home/santiago/Documents/dispensador/dispensador/resultadosM2_Rojo.txt'
+        output_file_path = '/home/santiago/Documents/dispensador/dispensador/resultados2M1_Rojo.txt'
         with open(output_file_path, 'w') as output_file:
             output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\t Voltaje \n")
 
@@ -209,7 +209,7 @@ def control_motores_y_medicion():
                 # Registrar los datos en el archivo
 
                 t = time.time() - start_time
-                output_file.write(f"{t}\t{motor2_speed}\t{W2}\t{RPM2}\t{peso_actual:.2f}\t{v2:.2f}\n")
+                output_file.write(f"{t}\t{motor1_speed}\t{W}\t{RPM}\t{peso_actual:.2f}\t{v1:.2f}\n")
                 output_file.flush()  # Asegurarse de guardar los datos
 
                 # Restablecer contadores
@@ -219,6 +219,7 @@ def control_motores_y_medicion():
                 numero_flancos_B2 = 0
                 salto_linea = salto_linea+1
                 # Controlar el tiempo de muestreo
+            
                 elapsed_time = t1.tocvalue()
                 toc=abs(INTERVALO - elapsed_time)
                 # print(elapsed_time)
