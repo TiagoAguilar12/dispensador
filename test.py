@@ -217,7 +217,7 @@ def control_motores_y_medicion():
                 # Registrar los datos en el archivo
 
                 t = time.time() - start_time
-                output_file.write(f"{t}\t{motor2_speed}\t{W2}\t{RPM2}\t{peso_actual:.2f}\t{v2:.2f}\n")
+                output_file.write(f"{t}\t{motor2_speed}\t{W2}\t{RPM2}\t{peso_actual}\t{v2:.2f}\n")
                 output_file.flush()  # Asegurarse de guardar los datos
 
                 # Restablecer contadores
