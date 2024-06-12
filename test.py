@@ -2,9 +2,10 @@
 #!/usr/bin/env python3
 import time
 import pigpio
-from hx711 import HX711  # Importar la clase HX711
+# from hx711 import HX711  # Importar la clase HX711
 import RPi.GPIO as GPIO  # Importar GPIO para la galga
 import math
+import serial
 from pytictoc import TicToc
 #
 # Inicialización de Pigpio
@@ -13,6 +14,9 @@ pi_m = math.pi
 
 t1 = TicToc()
 salto_linea = 0
+
+arduino_port = '/dev/ttyACM0'  # Puerto donde está conectada la placa Arduino
+arduino_baud=9600
 
 # Configuración de pines de motor y encoder
 motor1_pwm_pin = 12
@@ -27,7 +31,7 @@ PIN_ENCODER_B = 17
 PIN_ENCODER2_A = 16
 PIN_ENCODER2_B = 19
 
-INTERVALO = 0.5  # Intervalo de tiempo en segundos para cálculo de RPM
+INTERVALO = 0.2  # Intervalo de tiempo en segundos para cálculo de RPM
 
 # Contadores de flancos
 numero_flancos_A = 0
@@ -91,41 +95,41 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
     else:
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
-# Variables globales para la galga
-hx = None
+# # Variables globales para la galga
+# hx = None
 peso_actual = 0.0
-GPIO.setwarnings(False)  # Eliminar los warnings
-GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
+# GPIO.setwarnings(False)  # Eliminar los warnings
+# GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
 
-# Función para calibrar la galga
-def calibrar_galga():
-    global hx
-    hx = HX711(dout_pin=21, pd_sck_pin=20)
-    # Medir la tara y guardar el valor como compensación
-    err = hx.zero()
-    if err:
-        raise ValueError('La tara no se puede definir.')
+# # Función para calibrar la galga
+# def calibrar_galga():
+#     global hx
+#     hx = HX711(dout_pin=21, pd_sck_pin=20)
+#     # Medir la tara y guardar el valor como compensación
+#     err = hx.zero()
+#     if err:
+#         raise ValueError('La tara no se puede definir.')
     
-    # Calibración de la galga con un peso conocido
-    input('Coloque un peso conocido en la balanza y luego presione Enter')
-    reading = hx.get_data_mean()
+#     # Calibración de la galga con un peso conocido
+#     input('Coloque un peso conocido en la balanza y luego presione Enter')
+#     reading = hx.get_data_mean()
     
-    if reading:
-        print(reading)
-        known_weight_grams = input('Escriba cuántos gramos eran y presiona Enter: ')
-        try:
-            value = float(known_weight_grams)
-            print(value, 'gramos')
-        except ValueError:
-            print('Entero o flotante esperado y tengo:', known_weight_grams)
-        # Calcular la relación de escala para el canal A y ganancia 128
-        ratio = reading / value
-        hx.set_scale_ratio(ratio)
-        print('Galga calibrada.')
-        time.sleep(10)
+#     if reading:
+#         print(reading)
+#         known_weight_grams = input('Escriba cuántos gramos eran y presiona Enter: ')
+#         try:
+#             value = float(known_weight_grams)
+#             print(value, 'gramos')
+#         except ValueError:
+#             print('Entero o flotante esperado y tengo:', known_weight_grams)
+#         # Calcular la relación de escala para el canal A y ganancia 128
+#         ratio = reading / value
+#         hx.set_scale_ratio(ratio)
+#         print('Galga calibrada.')
+#         time.sleep(10)
     
-    print(hx.get_weight_mean(20))
-    print('Iniciando la medición y control de los motores.')
+#     print(hx.get_weight_mean(20))
+#     print('Iniciando la medición y control de los motores.')
 
 # Función principal para control de motores, cálculo de RPM y medición de peso
 def control_motores_y_medicion():
@@ -153,8 +157,12 @@ def control_motores_y_medicion():
             output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
-            while time.time() - start_time <= 120:  # Ejecutar durante 120 segundos
+            arduino = serial.Serial(arduino_port, arduino_baud)
+            time.sleep(2)  # Esperar a que la conexión serial se establezca
+
+            while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
+                print('Iniciando la medición y control de los motores.')
                 loop_start_time = t1.tic()
                 # Obtener velocidades de los motores
                 line1 = lines[current_line1].strip()
@@ -163,8 +171,8 @@ def control_motores_y_medicion():
                 motor2_speed = int(line2)
 
                 # Controlar los motores con las velocidades especificadas
-                control_motor(motor1_pwm_pin, motor1_dir_pin, 50, 'forward')
-                control_motor(motor2_pwm_pin, motor2_dir_pin, 50, 'forward')
+                control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
+                control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
 
                 # Avanzar en las líneas circularmente
                 if salto_linea == 4:
@@ -173,8 +181,8 @@ def control_motores_y_medicion():
                     salto_linea = 0
 
                 
-                # Medir peso
-                peso_actual = hx.get_weight_mean(20)
+                # # Medir peso
+                peso_actual = arduino.readline().decode('utf-8')
                 
 
                 # Calcular voltajes
@@ -236,8 +244,8 @@ def control_motores_y_medicion():
             pi.stop()
             print('Tiempo de funcionamiento de los motores completado.')
 
-# Ejecutar la función de calibración de la galga
-calibrar_galga()
+# # Ejecutar la función de calibración de la galga
+# calibrar_galga()
 
 # Ejecutar el control de motores y medición
 control_motores_y_medicion()
