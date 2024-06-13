@@ -185,12 +185,12 @@ def control_motores_y_medicion():
                     current_line2 = (current_line2 + 1) % total_lines
                     salto_linea = 0
 
-                loop_start_time1 = t2.tic()
+                t2.tic()
                 # # Medir peso
                 peso_actual = arduino.readline().decode('utf-8')
                 print(peso_actual)
-                elapsed_time1 = t2.tocvalue()
-                print('toc =' + elapsed_time1)
+                t2.toc()
+            
 
                 # Calcular voltajes
                 v1 = (0.0867 * motor1_speed) + 0.00898
