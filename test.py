@@ -100,6 +100,8 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
 peso_actual = 0.0
 GPIO.setwarnings(False)  # Eliminar los warnings
 GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
+arduino = serial.Serial(arduino_port, arduino_baud)
+time.sleep(5)  # Esperar a que la conexión serial se establezca
 
 # # Función para calibrar la galga
 # def calibrar_galga():
@@ -148,6 +150,9 @@ def control_motores_y_medicion():
         total_lines = len(lines)
         current_line1 = 0
         current_line2 = 0
+        
+        peso_actual = arduino.readline().decode('utf-8')
+        print(peso_actual)
 
         start_time = time.time()
 
@@ -157,8 +162,6 @@ def control_motores_y_medicion():
             output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
-            arduino = serial.Serial(arduino_port, arduino_baud)
-            time.sleep(2)  # Esperar a que la conexión serial se establezca
             print('Iniciando la medición y control de los motores.')
 
             while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
@@ -184,6 +187,7 @@ def control_motores_y_medicion():
                 
                 # # Medir peso
                 peso_actual = arduino.readline().decode('utf-8')
+                print(peso_actual)
                 
 
                 # Calcular voltajes
