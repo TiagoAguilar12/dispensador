@@ -139,7 +139,7 @@ def control_motores_y_medicion():
             # Bucle principal
             print('Iniciando la medición y control de los motores.')
 
-            while time.time() - start_time <= 120:  # Ejecutar durante 120 segundos
+            while time.time() - start_time <= 20:  # Ejecutar durante 120 segundos
                 loop_start_time = time.time()
                 
                 # Obtener velocidades de los motores
