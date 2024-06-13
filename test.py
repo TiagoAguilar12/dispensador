@@ -132,7 +132,7 @@ def control_motores_y_medicion():
         start_time = time.time()
 
         # Crear el archivo de salida para guardar los datos
-        output_file_path = '/home/santiago/Documents/dispensador/dispensador/masico_50_r.txt'
+        output_file_path = '/home/santiago/Documents/dispensador/dispensador/M1_B.txt'
         with open(output_file_path, 'w') as output_file:
             output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\n")
 
@@ -149,11 +149,11 @@ def control_motores_y_medicion():
                 motor2_speed = int(line2)
 
                 # Controlar los motores con las velocidades especificadas
-                control_motor(motor1_pwm_pin, motor1_dir_pin, 50, 'forward')
+                control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
                 control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
 
                 # Avanzar en las líneas circularmente
-                if salto_linea == 8:
+                if salto_linea == 7:
                     current_line1 = (current_line1 + 1) % total_lines   
                     current_line2 = (current_line2 + 1) % total_lines
                     salto_linea = 0
