@@ -134,7 +134,7 @@ def control_motores_y_medicion():
         # Crear el archivo de salida para guardar los datos
         output_file_path = '/home/santiago/Documents/dispensador/dispensador/masico_50_r.txt'
         with open(output_file_path, 'w') as output_file:
-            output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\t Voltaje \n")
+            output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\n")
 
             # Bucle principal
             print('Iniciando la medición y control de los motores.')
