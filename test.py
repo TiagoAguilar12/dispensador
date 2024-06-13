@@ -101,7 +101,7 @@ peso_actual = 0.0
 GPIO.setwarnings(False)  # Eliminar los warnings
 GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
 arduino = serial.Serial(arduino_port, arduino_baud)
-time.sleep(5)  # Esperar a que la conexión serial se establezca
+# time.sleep(5)  # Esperar a que la conexión serial se establezca
 
 # # Función para calibrar la galga
 # def calibrar_galga():
