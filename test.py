@@ -168,7 +168,7 @@ def control_motores_y_medicion():
             while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
                 
-                loop_start_time = t1.tic()
+                # loop_start_time = t1.tic()
                 # Obtener velocidades de los motores
                 line1 = lines[current_line1].strip()
                 line2 = lines[current_line2].strip()
@@ -235,11 +235,11 @@ def control_motores_y_medicion():
                 salto_linea = salto_linea+1
                 # Controlar el tiempo de muestreo
             
-                elapsed_time = t1.tocvalue()
-                toc=abs(INTERVALO - elapsed_time)
+                # elapsed_time = t1.tocvalue()
+                # toc=abs(INTERVALO - elapsed_time)
                 # print(elapsed_time)
                 # print(toc)
-                time.sleep(toc)
+                time.sleep(0.2)
 
             # Deshabilitar motores
             pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
