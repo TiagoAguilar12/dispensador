@@ -100,41 +100,20 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
 # hx = None
 peso_actual = 0.0
 GPIO.setwarnings(False)  # Eliminar los warnings
-GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
+# GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
 arduino = serial.Serial(arduino_port, arduino_baud)
 time.sleep(5)  # Esperar a que la conexión serial se establezca
 
-# # Función para calibrar la galga
-# def calibrar_galga():
-#     global hx
-#     hx = HX711(dout_pin=21, pd_sck_pin=20)
-# #     # Medir la tara y guardar el valor como compensación
-#      err = 
-#      if err:
-#          raise ValueError('La tara no se puede definir.')
-   
-#      # Calibración de la galga con un peso conocido
-#      input('Coloque un peso conocido en la balanza y luego presione Enter')
-#      reading = hx.get_data_mean()
-    
-#     if reading:
-#         print(reading)
-#         known_weight_grams = input('Escriba cuántos gramos eran y presiona Enter: ')
-#         try:
-#             value = float(known_weight_grams)
-#             print(value, 'gramos')
-#         except ValueError:
-#             print('Entero o flotante esperado y tengo:', known_weight_grams)
-#         # Calcular la relación de escala para el canal A y ganancia 128
-#         ratio = reading / value
-#         hx.set_scale_ratio(ratio)
-#         print('Galga calibrada.')
-#         time.sleep(10)
-    
-#     print(hx.get_weight_mean(20))
-#     print('Iniciando la medición y control de los motores.')
+def esperar_inicializacion_arduino():
+    while True:
+        if arduino.in_waiting > 0:
+            mensaje = arduino.readline().decode('utf-8').strip()
+            if mensaje == "Arduino Listo":
+                print("Arduino ha completado la inicialización.")
+                break
+            else:
+                print(f"Mensaje de Arduino: {mensaje}")
 
-# Función principal para control de motores, cálculo de RPM y medición de peso
 def control_motores_y_medicion():
     global numero_flancos_A, numero_flancos_B, numero_flancos_A2, numero_flancos_B2, RPM, RPM2, RPS, RPS2, peso_actual, v1, v2, salto_linea
     
@@ -251,8 +230,8 @@ def control_motores_y_medicion():
             pi.stop()
             print('Tiempo de funcionamiento de los motores completado.')
 
-# # Ejecutar la función de calibración de la galga
-# calibrar_galga()
+# # Ejecutar arduino
+esperar_inicializacion_arduino()
 
 # Ejecutar el control de motores y medición
 control_motores_y_medicion()
