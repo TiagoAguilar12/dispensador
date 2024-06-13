@@ -189,7 +189,7 @@ def control_motores_y_medicion():
 
                 
                 # # Medir peso
-                peso_actual = arduino.readline().decode('utf-8')
+                peso_actual = float(arduino.readline().decode('utf-8'))
                 
 
                 # Calcular voltajes
