@@ -100,8 +100,6 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
 peso_actual = 0.0
 GPIO.setwarnings(False)  # Eliminar los warnings
 GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
-arduino = serial.Serial(arduino_port, arduino_baud)
-time.sleep(2)  # Esperar a que la conexión serial se establezca
 
 # # Función para calibrar la galga
 # def calibrar_galga():
@@ -136,13 +134,7 @@ time.sleep(2)  # Esperar a que la conexión serial se establezca
 # Función principal para control de motores, cálculo de RPM y medición de peso
 def control_motores_y_medicion():
     global numero_flancos_A, numero_flancos_B, numero_flancos_A2, numero_flancos_B2, RPM, RPM2, RPS, RPS2, peso_actual, v1, v2, salto_linea
-    peso_actual = arduino.readline().decode('utf-8')
-    # Esperar para calibración
-    print(peso_actual)
-    input("Coloque peso conocido si era 0 aprox")  # Esperar a que el usuario presione Enter
-    peso_actual = arduino.readline().decode('utf-8')
-    print(peso_actual)
-    time.sleep(2)
+    
     # Habilitar motores
     pi.write(motor1_en_pin, 1)
     pi.write(motor2_en_pin, 1)
@@ -160,25 +152,27 @@ def control_motores_y_medicion():
         start_time = time.time()
 
         # Crear el archivo de salida para guardar los datos
-        output_file_path = '/home/santiago/Documents/dispensador/dispensador/pruebaR_50.txt'
+        output_file_path = '/home/santiago/Documents/dispensador/dispensador/flujo_50_r_2.txt'
         with open(output_file_path, 'w') as output_file:
             output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\t Voltaje \n")
 
             # Bucle principal
+            arduino = serial.Serial(arduino_port, arduino_baud)
+            time.sleep(2)  # Esperar a que la conexión serial se establezca
             print('Iniciando la medición y control de los motores.')
 
-            while time.time() - start_time <= 120:  # Ejecutar durante 120 segundos
+            while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
                 
                 loop_start_time = t1.tic()
                 # Obtener velocidades de los motores
                 line1 = lines[current_line1].strip()
                 line2 = lines[current_line2].strip()
-                motor1_speed = int(50)
+                motor1_speed = int(line1)
                 motor2_speed = int(line2)
 
                 # Controlar los motores con las velocidades especificadas
-                control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
+                control_motor(motor1_pwm_pin, motor1_dir_pin, 50, 'forward')
                 control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
 
                 # Avanzar en las líneas circularmente
