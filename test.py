@@ -153,7 +153,7 @@ def control_motores_y_medicion():
                 control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
 
                 # Avanzar en las líneas circularmente
-                if salto_linea == 4:
+                if salto_linea == 8:
                     current_line1 = (current_line1 + 1) % total_lines   
                     current_line2 = (current_line2 + 1) % total_lines
                     salto_linea = 0
