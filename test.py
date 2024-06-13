@@ -98,8 +98,8 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
 # # Variables globales para la galga
 # hx = None
 peso_actual = 0.0
-# GPIO.setwarnings(False)  # Eliminar los warnings
-# GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
+GPIO.setwarnings(False)  # Eliminar los warnings
+GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
 
 # # Función para calibrar la galga
 # def calibrar_galga():
@@ -135,6 +135,9 @@ peso_actual = 0.0
 def control_motores_y_medicion():
     global numero_flancos_A, numero_flancos_B, numero_flancos_A2, numero_flancos_B2, RPM, RPM2, RPS, RPS2, peso_actual, v1, v2, salto_linea
     
+    # Esperar para calibración
+    print("Coloque un peso conocido en la galga y presione Enter para continuar.")
+    input()  # Esperar a que el usuario presione Enter
     # Habilitar motores
     pi.write(motor1_en_pin, 1)
     pi.write(motor2_en_pin, 1)
@@ -159,10 +162,11 @@ def control_motores_y_medicion():
             # Bucle principal
             arduino = serial.Serial(arduino_port, arduino_baud)
             time.sleep(2)  # Esperar a que la conexión serial se establezca
+            print('Iniciando la medición y control de los motores.')
 
             while time.time() - start_time <= 30:  # Ejecutar durante 120 segundos
                 # Controlar el tiempo de muestreo
-                print('Iniciando la medición y control de los motores.')
+                
                 loop_start_time = t1.tic()
                 # Obtener velocidades de los motores
                 line1 = lines[current_line1].strip()
