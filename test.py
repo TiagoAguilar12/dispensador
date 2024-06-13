@@ -97,7 +97,7 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
 peso_actual = 0.0
 GPIO.setwarnings(False)  # Eliminar los warnings
 arduino = serial.Serial(arduino_port, arduino_baud)
-time.sleep(5)  # Esperar a que la conexión serial se establezca
+time.sleep(10)  # Esperar a que la conexión serial se establezca
 
 def esperar_inicializacion_arduino():
     while True:
