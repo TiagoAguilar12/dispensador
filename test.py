@@ -174,7 +174,7 @@ def control_motores_y_medicion():
                 # Obtener velocidades de los motores
                 line1 = lines[current_line1].strip()
                 line2 = lines[current_line2].strip()
-                motor1_speed = 50 #int(line1)
+                motor1_speed = int(50)
                 motor2_speed = int(line2)
 
                 # Controlar los motores con las velocidades especificadas
@@ -189,7 +189,7 @@ def control_motores_y_medicion():
 
                 
                 # # Medir peso
-                peso_actual = float(arduino.readline().decode('utf-8'))
+                peso_actual = arduino.readline().decode('utf-8')
                 
 
                 # Calcular voltajes
