@@ -108,7 +108,7 @@ def esperar_inicializacion_arduino():
     while True:
         if arduino.in_waiting > 0:
             mensaje = arduino.readline().decode('utf-8').strip()
-            if mensaje == "Arduino Listo":
+            if mensaje == "Listo para pesar":
                 print("Arduino ha completado la inicialización.")
                 break
             else:
