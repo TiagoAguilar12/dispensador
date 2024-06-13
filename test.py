@@ -13,6 +13,7 @@ pi = pigpio.pi()
 pi_m = math.pi
 
 t1 = TicToc()
+t2 = TicToc()
 salto_linea = 0
 
 arduino_port = '/dev/ttyACM0'  # Puerto donde está conectada la placa Arduino
@@ -101,20 +102,20 @@ peso_actual = 0.0
 GPIO.setwarnings(False)  # Eliminar los warnings
 GPIO.setmode(GPIO.BCM)  # Pines GPIO en numeración BCM
 arduino = serial.Serial(arduino_port, arduino_baud)
-# time.sleep(5)  # Esperar a que la conexión serial se establezca
+time.sleep(5)  # Esperar a que la conexión serial se establezca
 
 # # Función para calibrar la galga
 # def calibrar_galga():
 #     global hx
 #     hx = HX711(dout_pin=21, pd_sck_pin=20)
-#     # Medir la tara y guardar el valor como compensación
-#     err = hx.zero()
-#     if err:
-#         raise ValueError('La tara no se puede definir.')
-    
-#     # Calibración de la galga con un peso conocido
-#     input('Coloque un peso conocido en la balanza y luego presione Enter')
-#     reading = hx.get_data_mean()
+# #     # Medir la tara y guardar el valor como compensación
+#      err = 
+#      if err:
+#          raise ValueError('La tara no se puede definir.')
+   
+#      # Calibración de la galga con un peso conocido
+#      input('Coloque un peso conocido en la balanza y luego presione Enter')
+#      reading = hx.get_data_mean()
     
 #     if reading:
 #         print(reading)
@@ -184,11 +185,12 @@ def control_motores_y_medicion():
                     current_line2 = (current_line2 + 1) % total_lines
                     salto_linea = 0
 
-                
+                loop_start_time1 = t2.tic()
                 # # Medir peso
                 peso_actual = arduino.readline().decode('utf-8')
                 print(peso_actual)
-                
+                elapsed_time1 = t2.tocvalue()
+                print('toc =' + elapsed_time1)
 
                 # Calcular voltajes
                 v1 = (0.0867 * motor1_speed) + 0.00898
