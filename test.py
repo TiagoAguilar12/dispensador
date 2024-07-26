@@ -45,6 +45,26 @@ RPM = 0.0
 RPS2 = 0.0
 RPM2 = 0.0
 
+# Variables de flujo
+
+
+
+
+# Variables control maestro esclavo
+
+uk_m = 0.0
+uk_1_m= 0.0
+ek_m= 0.0
+ek_1_m= 0.0
+
+uk_s = 0.0
+uk_1_s= 0.0
+ek_s= 0.0
+ek_1_s= 0.0
+
+setpoint_m = 0.0
+setpoint_s = 0.0
+
 # Variable Voltaje
 v1 = 0.0
 v2 = 0.0
@@ -111,7 +131,7 @@ def esperar_inicializacion_arduino():
 
 def control_motores_y_medicion():
     global numero_flancos_A, numero_flancos_B, numero_flancos_A2, numero_flancos_B2, RPM, RPM2, RPS, RPS2, peso_actual, v1, v2, salto_linea
-    
+    global uk_m, uk_1_m, uk_s, uk_1_s, ek_m, ek_s, ek_1_m, ek_1_s, setpoint_m, setpoint_s
     # Habilitar motores
     pi.write(motor1_en_pin, 1)
     pi.write(motor2_en_pin, 1)
@@ -178,6 +198,24 @@ def control_motores_y_medicion():
                 RPS2 = flancos_totales_2 / (600.0)
                 W2 = RPS2 * ((2 * pi_m) / INTERVALO)
                 RPM2 = W2 * (30 / pi_m)
+
+                #Control maestro
+                ek_m = setpoint_m - flujo
+                uk_m = 0.08028 * ek_m + 0.05492 * ek_1_m + uk_1_m
+                ek_1_m = ek_m
+                uk_1_m = uk_m
+
+                setpoint_s = uk_m
+
+                #Control esclavo
+                ek_s = uk_m - W
+                uk_s = 0.8824 * ek_s + 0.09212 * ek_1_s + uk_1_s
+                ek_1_s = ek_s
+                uk_1_s= uk_s
+
+                
+
+                
 
                 # Registrar los datos en el archivo
                 t = time.time() - start_time
