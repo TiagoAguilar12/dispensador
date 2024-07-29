@@ -153,6 +153,7 @@ with open(output_file_path, 'w') as output_file:
        
         motor1_speed = max(0, min(100, upi_s))  # Asegurar que motor1_speed esté en el rango 0-100
         control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
+        upi_s= 0
 
         flancos_totales_1 = numero_flancos_A + numero_flancos_B
         RPS = flancos_totales_1 / (600.0)
