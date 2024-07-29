@@ -137,10 +137,6 @@ def control_motores_y_medicion():
     pi.write(motor1_en_pin, 1)
     pi.write(motor2_en_pin, 1)
 
-    # Ruta del archivo
-    file_path = '/home/santiago/Documents/dispensador/dispensador/Pbrs1.txt'
-    
-    # Lectura de archivo
 
 # Loop de Control
 start_time = time.time()
@@ -155,11 +151,10 @@ while(time.time()-start_time <= 20):
     t1 = TicToc()           # Tic
 
     #Control maestro
-    rk_m= 10*3*3
     yk_m = fm_n
     ek_m= rk_m - yk_m
     iek_m = ek_m + iek_m_1
-    upi_m = Kp_m*ek_m + ki_m*(ek_m + iek_m_1)
+    upi_m = Kp_m*ek_m + ki_m*iek_m
 
     #Control esclavo
     rk_s = upi_m
@@ -175,55 +170,46 @@ while(time.time()-start_time <= 20):
     flancos_totales_1 = numero_flancos_A + numero_flancos_B
     RPS = flancos_totales_1 / (600.0)
     W = RPS * ((2 * pi_m) / INTERVALO)
-    RPM = W * (30 / pi_m)
 
- #Medicion flujo 
-    delta_W = W - setpoint_f
-    delta_f= 
-    fm_n= 0.1969*W_1 + 1.359 * fm_n_1 - 0.581*fm_n_2 + 35
-    #Reemplazo variables  flujo 
+    #Medicion flujo 
 
-    W_1 = W
+    delta_W = W - setpoint_W
+    fm_n= fm_n - setpoint_W
+    fm_n= 0.1969*W_1 + 1.359 * fm_n_1 - 0.581*fm_n_2 
     fm_n_2 = fm_n_1
     fm_n_1 = fm_n
+    W_1 = delta_W
+
+    fm_n= fm_n + setpoint_f
     
-    #Reemplazo variables maestro- esclavo
 
     iek_s_1 = iek_s
     iek_m_1 = iek_m
-
-
-    # Registrar los datos en el archivo
-    t = time.time() - start_time
-    output_file.write(f"{t:.2f}\t{motor_speed}\t{W2:.2f}\t{RPM2:.2f}\t{peso_actual}")
-    # output_file.write("\n")z
-    output_file.flush()  # Asegurarse de guardar los datos
 
     # Restablecer contadores
     numero_flancos_A = 0
     numero_flancos_B = 0
     numero_flancos_A2 = 0
     numero_flancos_B2 = 0
-    salto_linea += 1
+
+    e_time= t1.tocvalue()
+    toc= abs(e_time)
+    time.sleep(toc)
+    print("tiempo transcurrido =" + toc)
     
-    # Controlar el tiempo de muestreo
-    elapsed_time = time.time() - loop_start_time
-    sleep_time = INTERVALO - elapsed_time
-    if sleep_time > 0:
-        time.sleep(sleep_time)
+    
+# Deshabilitar motores
+pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
+pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
+pi.write(motor1_en_pin, 0)
+pi.write(motor2_en_pin, 0)
 
-        # Deshabilitar motores
-        pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
-        pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
-        pi.write(motor1_en_pin, 0)
-        pi.write(motor2_en_pin, 0)
 
-        # Detener Pigpio
-        pi.stop()
-        print('Tiempo de funcionamiento de los motores completado.')
 
-# Esperar a que Arduino complete la inicialización
-esperar_inicializacion_arduino()
+# Detener Pigpio
+pi.stop()
+print('Tiempo de funcionamiento de los motores completado.')
+
 
 # Ejecutar el control de motores y medición
 control_motores_y_medicion()
