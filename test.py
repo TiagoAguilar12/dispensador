@@ -139,7 +139,7 @@ def control_motores_y_medicion():
 
 # Loop de Control
 start_time = time.time()
-rk_m= input("Ingrese la referencia:  ")
+rk_m= float(input("Ingrese la referencia:  "))
 # Crear el archivo de salida para guardar los datos
 output_file_path = '/home/santiago/Documents/dispensador/dispensador/test_PI_MS.txt'
 with open(output_file_path, 'w') as output_file:
