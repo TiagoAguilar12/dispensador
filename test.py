@@ -11,9 +11,6 @@ from pytictoc import TicToc
 pi = pigpio.pi()
 pi_m = math.pi
 
-t1 = TicToc()
-t2 = TicToc()
-salto_linea = 0
 
 # Configuración de pines de motor y encoder
 motor1_pwm_pin = 12
@@ -121,20 +118,8 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
     else:
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
-# Variables globales para la galga
-peso_actual = 0.0
-GPIO.setwarnings(False)  # Eliminar los warnings
-time.sleep(10)  # Esperar a que la conexión serial se establezca
 
 
-
-def control_motores_y_medicion():
-    global numero_flancos_A, numero_flancos_B, numero_flancos_A2, numero_flancos_B2, RPM, RPM2, RPS, RPS2, peso_actual, v1, v2, salto_linea
-    global kp_s,Kp_m, ki_m, ki_s, rk_m, rk_s, yk_m, yk_s, ek_m, ek_s, ek_1_m, ek_1_s, iek_m, iek_s, iek_m_1, iek_s_1, upi_m, upi_s
-    global fm_n_1,fm_n,fm_n_2, w_n_1, W_1, delta_W, setpoint_W,setpoint_f
-    # Habilitar motores
-    pi.write(motor1_en_pin, 1)
-    pi.write(motor2_en_pin, 1)
 
 
 # Loop de Control
@@ -218,6 +203,3 @@ pi.write(motor2_en_pin, 0)
 pi.stop()
 print('Tiempo de funcionamiento de los motores completado.')
 
-
-# Ejecutar el control de motores y medición
-control_motores_y_medicion()
