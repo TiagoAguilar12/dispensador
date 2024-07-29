@@ -110,6 +110,7 @@ cb3 = pi.callback(PIN_ENCODER2_A, pigpio.EITHER_EDGE, contador_flancos_encoder2)
 # Función para controlar el motor
 def control_motor(pin_pwm, pin_dir, speed_percent, direction):
     duty_cycle = int(speed_percent * 255 / 100)
+    duty_cycle = max(0, min(255, duty_cycle))  # Asegurar que duty_cycle esté en el rango 0-255
     pi.set_PWM_dutycycle(pin_pwm, duty_cycle)
 
     if direction == 'forward':
@@ -148,8 +149,8 @@ with open(output_file_path, 'w') as output_file:
         ek_s= rk_s - yk_s
         iek_s = ek_s + iek_s_1
         upi_s = kp_s*ek_s + ki_s*(ek_s + iek_s_1)
-
-        motor1_speed= upi_s
+       
+        motor1_speed = max(0, min(100, upi_s))  # Asegurar que motor1_speed esté en el rango 0-100
         control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
 
         flancos_totales_1 = numero_flancos_A + numero_flancos_B
