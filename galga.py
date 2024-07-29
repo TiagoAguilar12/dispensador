@@ -145,7 +145,8 @@ with open(output_file_path, 'w') as output_file:
 
     while(time.time()-start_time <= 20):
         
-        t1 = TicToc()           # Tic
+        t1 = TicToc()   
+        t1.tic()        # Tic
         print(t1)
 
         ek = rk - fk 
