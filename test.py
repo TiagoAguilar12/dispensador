@@ -147,7 +147,8 @@ with open(output_file_path, 'w') as output_file:
 
     while(time.time()-start_time <= 20):
         
-        t1 = TicToc()           # Tic
+        t1 = TicToc()  
+        t1.tic()          # Tic
 
         #Control maestro
         yk_m = fm_n
