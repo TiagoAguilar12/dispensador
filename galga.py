@@ -185,8 +185,10 @@ with open(output_file_path, 'w') as output_file:
         fk = delta_f + set_point_f
         # print("Flujo = "+ fk)
 
-        e_time = t1.tocvalue()
-        toc = abs(T-e_time)         #Toc
+        e_time= t1.tocvalue()
+        print(e_time)
+        toc= abs(T- e_time)
+        print(toc)
         time.sleep(toc)
     
 
