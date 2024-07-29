@@ -174,7 +174,7 @@ while(time.time()-start_time <= 20):
 
     # Registrar los datos en el archivo
     ts = time.time() - start_time
-    output_file.write(f"{ts:.2f}\t{uk:.2f}\t{W:.2f}\t{fk:.2f}")
+    output_file.write(f"{ts:.2f}\t{W:.2f}\t{fk:.2f}")
 
     # Restablecer contadores
     numero_flancos_A = 0
