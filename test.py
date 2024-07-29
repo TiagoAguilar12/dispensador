@@ -137,11 +137,6 @@ with open(output_file_path, 'w') as output_file:
         t1 = TicToc()  
         t1.tic()          # Tic
 
-        #Control maestro
-        yk_m = fm_n
-        ek_m= rk_m - yk_m
-        iek_m = ek_m + iek_m_1
-        upi_m = Kp_m*ek_m + ki_m*iek_m
 
         #Control esclavo
         rk_s = upi_m
@@ -150,10 +145,18 @@ with open(output_file_path, 'w') as output_file:
         iek_s = ek_s + iek_s_1
         upi_s = kp_s*ek_s + ki_s*(ek_s + iek_s_1)
         print("pwm = "+ str(upi_s))
+
+        #Control maestro
+        yk_m = fm_n
+        ek_m= rk_m - yk_m
+        iek_m = ek_m + iek_m_1
+        upi_m = Kp_m*ek_m + ki_m*iek_m
+
+       
        
         motor1_speed = max(0, min(100, upi_s))  # Asegurar que motor1_speed esté en el rango 0-100
         control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
-        upi_s= 0
+
 
         flancos_totales_1 = numero_flancos_A + numero_flancos_B
         RPS = flancos_totales_1 / (600.0)
