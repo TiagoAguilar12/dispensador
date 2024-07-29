@@ -45,6 +45,7 @@ w_n_1= 0.0
 fm_n_1= 0.0
 fm_n_2= 0.0
 W_1 = 0.0
+W=0.0
 
 # Variables control maestro esclavo
 
@@ -135,11 +136,6 @@ with open(output_file_path, 'w') as output_file:
         t1 = TicToc()  
         t1.tic()          # Tic
 
-         # Calcular RPM para el motor 1
-        flancos_totales_1 = numero_flancos_A + numero_flancos_B
-        RPS = flancos_totales_1 / (600.0)
-        W = RPS * ((2 * pi_m) / INTERVALO)
-
         #Control maestro
         yk_m = fm_n
         ek_m= rk_m - yk_m
@@ -155,6 +151,10 @@ with open(output_file_path, 'w') as output_file:
 
         motor1_speed= upi_s
         control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
+
+        flancos_totales_1 = numero_flancos_A + numero_flancos_B
+        RPS = flancos_totales_1 / (600.0)
+        W = RPS * ((2 * pi_m) / INTERVALO)
 
 
         #Medicion flujo 
