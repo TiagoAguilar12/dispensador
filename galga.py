@@ -155,7 +155,7 @@ while(time.time()-start_time <= 20):
     xk_stim = Ao@xi + Bo@uo
     uk = -xik-K@xk_stim
     motor1_speed = uk
-    print("uk = "+ uk)
+    # print("uk = "+ uk)
     control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
     #Lectura de Flancos para medir velocidad
     flancos_totales_1 = numero_flancos_A + numero_flancos_B
@@ -183,7 +183,7 @@ while(time.time()-start_time <= 20):
     numero_flancos_B2 = 0
 
     fk = delta_f + set_point_f
-    print("Flujo = "+ fk)
+    # print("Flujo = "+ fk)
 
     e_time = t1.tocvalue()
     toc = abs(T-e_time)         #Toc
