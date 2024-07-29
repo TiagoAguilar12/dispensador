@@ -149,6 +149,7 @@ with open(output_file_path, 'w') as output_file:
         ek_s= rk_s - yk_s
         iek_s = ek_s + iek_s_1
         upi_s = kp_s*ek_s + ki_s*(ek_s + iek_s_1)
+        print("pwm = "+ str(upi_s))
        
         motor1_speed = max(0, min(100, upi_s))  # Asegurar que motor1_speed esté en el rango 0-100
         control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
@@ -168,6 +169,7 @@ with open(output_file_path, 'w') as output_file:
         W_1 = delta_W
 
         fm_n= fm_n + setpoint_f
+        print("flujo = "+ str(fm_n))
         
 
         iek_s_1 = iek_s
@@ -185,9 +187,7 @@ with open(output_file_path, 'w') as output_file:
         numero_flancos_B2 = 0
 
         e_time= t1.tocvalue()
-        print(e_time)
         toc= abs(INTERVALO- e_time)
-        print(toc)
         time.sleep(toc)
         
         
