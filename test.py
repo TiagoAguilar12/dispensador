@@ -188,7 +188,7 @@ with open(output_file_path, 'w') as output_file:
         toc= abs(INTERVALO- e_time)
         print(toc)
         time.sleep(toc)
-        print("tiempo transcurrido =" + toc)
+        
         
     
 # Deshabilitar motores
