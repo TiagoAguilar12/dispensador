@@ -15,9 +15,6 @@ t1 = TicToc()
 t2 = TicToc()
 salto_linea = 0
 
-arduino_port = '/dev/ttyACM0'  # Puerto donde está conectada la placa Arduino
-arduino_baud = 9600
-
 # Configuración de pines de motor y encoder
 motor1_pwm_pin = 12
 motor1_dir_pin = 24
@@ -46,24 +43,35 @@ RPS2 = 0.0
 RPM2 = 0.0
 
 # Variables de flujo
-
-
-
+fm_n= 0.0
+w_n_1= 0.0
+fm_n_1= 0.0
+fm_n_2= 0.0
+W_1 = 0.0
 
 # Variables control maestro esclavo
 
-uk_m = 0.0
-uk_1_m= 0.0
+Kp_m = 0.8824
+ki_m = 0.4606
+kp_s = 0.08028
+ki_s = 0.2746
+
+rk_m= 0.0
+yk_m= 0.0
 ek_m= 0.0
-ek_1_m= 0.0
+iek_m= 0.0
+iek_m_1= 0.0
+upi_m= 0.0
 
-uk_s = 0.0
-uk_1_s= 0.0
+rk_s= 0.0
+yk_s= 0.0
 ek_s= 0.0
-ek_1_s= 0.0
+iek_s= 0.0
+iek_s_1= 0.0
+upi_s= 0.0
 
-setpoint_m = 0.0
-setpoint_s = 0.0
+setpoint_f= 35.0
+setpoint_W = 25.0
 
 # Variable Voltaje
 v1 = 0.0
@@ -119,19 +127,12 @@ GPIO.setwarnings(False)  # Eliminar los warnings
 arduino = serial.Serial(arduino_port, arduino_baud)
 time.sleep(10)  # Esperar a que la conexión serial se establezca
 
-def esperar_inicializacion_arduino():
-    while True:
-        if arduino.in_waiting > 0:
-            mensaje = arduino.readline().decode('utf-8').strip()
-            if mensaje == "Listo para pesar":
-                print("Arduino ha completado la inicialización.")
-                break
-            else:
-                print(f"Mensaje de Arduino: {mensaje}")
+
 
 def control_motores_y_medicion():
     global numero_flancos_A, numero_flancos_B, numero_flancos_A2, numero_flancos_B2, RPM, RPM2, RPS, RPS2, peso_actual, v1, v2, salto_linea
-    global uk_m, uk_1_m, uk_s, uk_1_s, ek_m, ek_s, ek_1_m, ek_1_s, setpoint_m, setpoint_s
+    global kp_s,Kp_m, ki_m, ki_s, rk_m, rk_s, yk_m, yk_s, ek_m, ek_s, ek_1_m, ek_1_s, iek_m, iek_s, iek_m_1, iek_s_1, upi_m, upi_s
+    global fm_n_1,fm_n,fm_n_2, w_n_1, W_1, delta_W, setpoint_W,setpoint_f
     # Habilitar motores
     pi.write(motor1_en_pin, 1)
     pi.write(motor2_en_pin, 1)
@@ -140,111 +141,86 @@ def control_motores_y_medicion():
     file_path = '/home/santiago/Documents/dispensador/dispensador/Pbrs1.txt'
     
     # Lectura de archivo
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        total_lines = len(lines)
-        current_line1 = 0
-        current_line2 = 0
-        
-        peso_actual = arduino.readline().decode('utf-8')
-        print(peso_actual)
 
-        start_time = time.time()
+# Loop de Control
+start_time = time.time()
+rk_m= input("Ingrese la referencia:  ")
+# Crear el archivo de salida para guardar los datos
+output_file_path = '/home/santiago/Documents/dispensador/dispensador/test_PI_MS.txt'
+with open(output_file_path, 'w') as output_file:
+    output_file.write("Tiempo \t PWM \t W \tFlujo \n")
 
-        # Crear el archivo de salida para guardar los datos
-        output_file_path = '/home/santiago/Documents/dispensador/dispensador/M2_Rojo.txt'
-        with open(output_file_path, 'w') as output_file:
-            output_file.write("Tiempo\t PWM \t Velocidad Angular\t RPM \tPeso (g)\n")
+while(time.time()-start_time <= 20):
+       
+    t1 = TicToc()           # Tic
 
-            # Bucle principal
-            print('Iniciando la medición y control de los motores.')
+    #Control maestro
+    rk_m= 10*3*3
+    yk_m = fm_n
+    ek_m= rk_m - yk_m
+    iek_m = ek_m + iek_m_1
+    upi_m = Kp_m*ek_m + ki_m*(ek_m + iek_m_1)
 
-            while time.time() - start_time <= 125 :  # Ejecutar durante 120 segundos
-                loop_start_time = time.time()
-                
-                # Obtener velocidades de los motores
-                line1 = lines[current_line1].strip()
-                line2 = lines[current_line2].strip()
-                motor1_speed = int(line1)
-                motor2_speed = int(line2)
+    #Control esclavo
+    rk_s = upi_m
+    yk_s = W
+    ek_s= rk_s - yk_s
+    iek_s = ek_s + iek_s_1
+    upi_s = kp_s*ek_s + ki_s*(ek_s + iek_s_1)
 
-                # Controlar los motores con las velocidades especificadas
-                control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
-                control_motor(motor2_pwm_pin, motor2_dir_pin, motor2_speed, 'forward')
+    motor1_speed= upi_s
+    control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
 
-                # Avanzar en las líneas circularmente
-                if salto_linea == 7:
-                    current_line1 = (current_line1 + 1) % total_lines   
-                    current_line2 = (current_line2 + 1) % total_lines
-                    salto_linea = 0
+    # Calcular RPM para el motor 1
+    flancos_totales_1 = numero_flancos_A + numero_flancos_B
+    RPS = flancos_totales_1 / (600.0)
+    W = RPS * ((2 * pi_m) / INTERVALO)
+    RPM = W * (30 / pi_m)
 
-                # Medir peso
-                if arduino.in_waiting > 0:
-                    peso_actual = arduino.readline().decode('utf-8')
-                    print(peso_actual)
-                
-                # Calcular voltajes
-                v1 = (0.0867 * motor1_speed) + 0.00898
-                v2 = (0.0866 * motor2_speed) + 0.00967
+ #Medicion flujo 
+    delta_W = W - setpoint_f
+    delta_f= 
+    fm_n= 0.1969*W_1 + 1.359 * fm_n_1 - 0.581*fm_n_2 + 35
+    #Reemplazo variables  flujo 
 
-                # Calcular RPM para el motor 1
-                flancos_totales_1 = numero_flancos_A + numero_flancos_B
-                RPS = flancos_totales_1 / (600.0)
-                W = RPS * ((2 * pi_m) / INTERVALO)
-                RPM = W * (30 / pi_m)
+    W_1 = W
+    fm_n_2 = fm_n_1
+    fm_n_1 = fm_n
+    
+    #Reemplazo variables maestro- esclavo
 
-                # Calcular RPM para el motor 2
-                flancos_totales_2 = numero_flancos_A2 + numero_flancos_B2
-                RPS2 = flancos_totales_2 / (600.0)
-                W2 = RPS2 * ((2 * pi_m) / INTERVALO)
-                RPM2 = W2 * (30 / pi_m)
+    iek_s_1 = iek_s
+    iek_m_1 = iek_m
 
-                #Control maestro
-                ek_m = setpoint_m - flujo
-                uk_m = 0.08028 * ek_m + 0.05492 * ek_1_m + uk_1_m
-                ek_1_m = ek_m
-                uk_1_m = uk_m
 
-                setpoint_s = uk_m
+    # Registrar los datos en el archivo
+    t = time.time() - start_time
+    output_file.write(f"{t:.2f}\t{motor_speed}\t{W2:.2f}\t{RPM2:.2f}\t{peso_actual}")
+    # output_file.write("\n")z
+    output_file.flush()  # Asegurarse de guardar los datos
 
-                #Control esclavo
-                ek_s = uk_m - W
-                uk_s = 0.8824 * ek_s + 0.09212 * ek_1_s + uk_1_s
-                ek_1_s = ek_s
-                uk_1_s= uk_s
+    # Restablecer contadores
+    numero_flancos_A = 0
+    numero_flancos_B = 0
+    numero_flancos_A2 = 0
+    numero_flancos_B2 = 0
+    salto_linea += 1
+    
+    # Controlar el tiempo de muestreo
+    elapsed_time = time.time() - loop_start_time
+    sleep_time = INTERVALO - elapsed_time
+    if sleep_time > 0:
+        time.sleep(sleep_time)
 
-                
+        # Deshabilitar motores
+        pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
+        pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
+        pi.write(motor1_en_pin, 0)
+        pi.write(motor2_en_pin, 0)
 
-                
-
-                # Registrar los datos en el archivo
-                t = time.time() - start_time
-                output_file.write(f"{t:.2f}\t{motor2_speed}\t{W2:.2f}\t{RPM2:.2f}\t{peso_actual}")
-                # output_file.write("\n")
-                output_file.flush()  # Asegurarse de guardar los datos
-
-                # Restablecer contadores
-                numero_flancos_A = 0
-                numero_flancos_B = 0
-                numero_flancos_A2 = 0
-                numero_flancos_B2 = 0
-                salto_linea += 1
-                
-                # Controlar el tiempo de muestreo
-                elapsed_time = time.time() - loop_start_time
-                sleep_time = INTERVALO - elapsed_time
-                if sleep_time > 0:
-                    time.sleep(sleep_time)
-
-            # Deshabilitar motores
-            pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
-            pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
-            pi.write(motor1_en_pin, 0)
-            pi.write(motor2_en_pin, 0)
-
-            # Detener Pigpio
-            pi.stop()
-            print('Tiempo de funcionamiento de los motores completado.')
+        # Detener Pigpio
+        pi.stop()
+        print('Tiempo de funcionamiento de los motores completado.')
 
 # Esperar a que Arduino complete la inicialización
 esperar_inicializacion_arduino()
