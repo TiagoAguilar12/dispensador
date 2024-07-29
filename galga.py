@@ -122,7 +122,7 @@ set_point_w = 25.0
 delta_w = 0.0
 delta_w_1 = 0.0
 delta_f = 0.0
-delta_f_1 = 0.0
+delta_f_1 = 0.0 
 delta_f_2 = 0.0
 
 xi = np.array([[0],
@@ -155,8 +155,8 @@ while(time.time()-start_time <= 20):
     xk_stim = Ao@xi + Bo@uo
     uk = -xik-K@xk_stim
     motor1_speed = uk
+    print("uk = "+ uk)
     control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
-
     #Lectura de Flancos para medir velocidad
     flancos_totales_1 = numero_flancos_A + numero_flancos_B
     FPS = flancos_totales_1 / (600.0)
@@ -165,11 +165,37 @@ while(time.time()-start_time <= 20):
     delta_w = W - set_point_w
     delta_f = fk - set_point_f
     delta_f = 0.1969*delta_w_1 + 1.359*delta_f_1 -0.581*delta_f_2
+
     delta_f_2 = delta_f_1
     delta_f_1 = delta_f
-    fk = delta_f + set_point_f
-
     xi = xk_stim
     ek_1 = ek
     delta_w_1 = delta_w 
+
+    # Registrar los datos en el archivo
+    ts = time.time() - start_time
+    output_file.write(f"{ts:.2f}\t{uk:.2f}\t{W:.2f}\t{fk:.2f}")
+
+    # Restablecer contadores
+    numero_flancos_A = 0
+    numero_flancos_B = 0
+    numero_flancos_A2 = 0
+    numero_flancos_B2 = 0
+
+    fk = delta_f + set_point_f
+    print("Flujo = "+ fk)
+
+    e_time = t1.tocvalue()
+    toc = abs(T-e_time)         #Toc
+    time.sleep(toc)
     
+
+# Deshabilitar motores
+pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
+pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
+pi.write(motor1_en_pin, 0)
+pi.write(motor2_en_pin, 0)
+
+# Detener Pigpio
+pi.stop()
+print('Tiempo de funcionamiento de los motores completado.')
