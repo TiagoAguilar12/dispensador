@@ -11,6 +11,7 @@ from pytictoc import TicToc
 pi = pigpio.pi()
 pi_m = math.pi
 
+
 # Configuración de pines de motor y encoder
 motor1_pwm_pin = 12
 motor1_dir_pin = 24
@@ -39,34 +40,35 @@ RPS2 = 0.0
 RPM2 = 0.0
 
 # Variables de flujo
-fm_n = 0.0
-w_n_1 = 0.0
-fm_n_1 = 0.0
-fm_n_2 = 0.0
+fm_n= 0.0
+w_n_1= 0.0
+fm_n_1= 0.0
+fm_n_2= 0.0
 W_1 = 0.0
-W = 0.0
+W=0.0
 
 # Variables control maestro esclavo
+
 Kp_m = 0.8824
 ki_m = 0.4606
 kp_s = 0.08028
 ki_s = 0.2746
 
-rk_m = 0.0
-yk_m = 0.0
-ek_m = 0.0
-iek_m = 0.0
-iek_m_1 = 0.0
-upi_m = 0.0
+rk_m= 0.0
+yk_m= 0.0
+ek_m= 0.0
+iek_m= 0.0
+iek_m_1= 0.0
+upi_m= 0.0
 
-rk_s = 0.0
-yk_s = 0.0
-ek_s = 0.0
-iek_s = 0.0
-iek_s_1 = 0.0
-upi_s = 0.0
+rk_s= 0.0
+yk_s= 0.0
+ek_s= 0.0
+iek_s= 0.0
+iek_s_1= 0.0
+upi_s= 0.0
 
-setpoint_f = 35.0
+setpoint_f= 35.0
 setpoint_W = 25.0
 
 # Variable Voltaje
@@ -118,49 +120,54 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
     else:
         raise ValueError("Dirección no válida. Usa 'forward' o 'backward'.")
 
+
+
+
+
 # Loop de Control
 start_time = time.time()
-rk_m = float(input("Ingrese la referencia:  "))
+rk_m= float(input("Ingrese la referencia:  "))
 # Crear el archivo de salida para guardar los datos
 output_file_path = '/home/santiago/Documents/dispensador/dispensador/test_PI_MS.txt'
 with open(output_file_path, 'w') as output_file:
     output_file.write("Tiempo \t PWM \t W \tFlujo \n")
 
-    while(time.time() - start_time <= 20):
+    while(time.time()-start_time <= 20):
         
         t1 = TicToc()  
-        t1.tic()  # Tic
+        t1.tic()          # Tic
 
-        # Medición flujo 
+        #Medicion flujo 
         delta_W = W - setpoint_W
-        fm_n = fm_n - setpoint_W
-        fm_n = 0.1969 * W_1 + 1.359 * fm_n_1 - 0.581 * fm_n_2 
+        fm_n= fm_n - setpoint_W
+        fm_n= 0.1969*W_1 + 1.359 * fm_n_1 - 0.581*fm_n_2 
         fm_n_2 = fm_n_1
         fm_n_1 = fm_n
         W_1 = delta_W
 
-        fm_n = fm_n + setpoint_f
-        print("flujo = " + str(fm_n))
+        fm_n= fm_n + setpoint_f
+        print("flujo = "+ str(fm_n))
 
-        # Control maestro
-        yk_m = fm_n
-        ek_m = rk_m - yk_m
-        iek_m = ek_m + iek_m_1
-        upi_m = Kp_m * ek_m + ki_m * iek_m
-
-        iek_m_1 = iek_m
-
-        # Control esclavo
+        #Control esclavo
         rk_s = upi_m
         yk_s = W
-        ek_s = rk_s - yk_s
+        ek_s= rk_s - yk_s
         iek_s = ek_s + iek_s_1
-        upi_s = kp_s * ek_s + ki_s * iek_s
-        print("pwm = " + str(upi_s))
+        upi_s = (kp_s*ek_s) + (ki_s*iek_s)
+        print("pwm = "+ str(upi_s))
 
         iek_s_1 = iek_s
+        iek_s=0
 
-        # Limitar upi_s antes de usarlo como velocidad del motor
+        #Control maestro
+        yk_m = fm_n
+        ek_m= rk_m - yk_m
+        iek_m = ek_m + iek_m_1
+        upi_m = Kp_m*ek_m + ki_m*iek_m
+
+        iek_m_1 = iek_m
+        iek_m= 0
+
         motor1_speed = max(0, min(100, upi_s))  # Asegurar que motor1_speed esté en el rango 0-100
         control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
 
@@ -170,7 +177,8 @@ with open(output_file_path, 'w') as output_file:
 
         # Registrar los datos en el archivo
         ts = time.time() - start_time
-        output_file.write(f"{ts:.2f}\t{motor1_speed:.2f}\t{W:.2f}\t{fm_n:.2f}\n")
+        output_file.write(f"{ts:.2f}\t{upi_s:.2f}\t{W:.2f}\t{fm_n:.2f}")
+
 
         # Restablecer contadores
         numero_flancos_A = 0
@@ -178,16 +186,21 @@ with open(output_file_path, 'w') as output_file:
         numero_flancos_A2 = 0
         numero_flancos_B2 = 0
 
-        e_time = t1.tocvalue()
-        toc = max(0, INTERVALO - e_time)
+        e_time= t1.tocvalue()
+        toc= abs(INTERVALO- e_time)
         time.sleep(toc)
         
+        
+    
 # Deshabilitar motores
 pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
 pi.set_PWM_dutycycle(motor2_pwm_pin, 0)
 pi.write(motor1_en_pin, 0)
 pi.write(motor2_en_pin, 0)
 
+
+
 # Detener Pigpio
 pi.stop()
 print('Tiempo de funcionamiento de los motores completado.')
+
