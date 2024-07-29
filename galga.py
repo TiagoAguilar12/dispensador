@@ -137,7 +137,7 @@ xk_stim = np.array([[0],
 
 # Loop de Control
 start_time = time.time()
-rk = input("Ingrese la referencia:  ")
+rk = float(input("Ingrese la referencia:  "))
 # Crear el archivo de salida para guardar los datos
 output_file_path = '/home/santiago/Documents/dispensador/dispensador/test_controlador_ss.txt'
 with open(output_file_path, 'w') as output_file:
