@@ -143,7 +143,7 @@ with open(output_file_path, 'w') as output_file:
         yk_s = W
         ek_s= rk_s - yk_s
         iek_s = ek_s + iek_s_1
-        upi_s = kp_s*ek_s + ki_s*(ek_s + iek_s_1)
+        upi_s = kp_s*ek_s + ki_s*iek_s
         print("pwm = "+ str(upi_s))
 
         #Control maestro
