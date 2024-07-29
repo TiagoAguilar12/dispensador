@@ -124,7 +124,6 @@ def control_motor(pin_pwm, pin_dir, speed_percent, direction):
 # Variables globales para la galga
 peso_actual = 0.0
 GPIO.setwarnings(False)  # Eliminar los warnings
-arduino = serial.Serial(arduino_port, arduino_baud)
 time.sleep(10)  # Esperar a que la conexión serial se establezca
 
 
@@ -146,57 +145,64 @@ output_file_path = '/home/santiago/Documents/dispensador/dispensador/test_PI_MS.
 with open(output_file_path, 'w') as output_file:
     output_file.write("Tiempo \t PWM \t W \tFlujo \n")
 
-while(time.time()-start_time <= 20):
-       
-    t1 = TicToc()           # Tic
+    while(time.time()-start_time <= 20):
+        
+        t1 = TicToc()           # Tic
 
-    #Control maestro
-    yk_m = fm_n
-    ek_m= rk_m - yk_m
-    iek_m = ek_m + iek_m_1
-    upi_m = Kp_m*ek_m + ki_m*iek_m
+        #Control maestro
+        yk_m = fm_n
+        ek_m= rk_m - yk_m
+        iek_m = ek_m + iek_m_1
+        upi_m = Kp_m*ek_m + ki_m*iek_m
 
-    #Control esclavo
-    rk_s = upi_m
-    yk_s = W
-    ek_s= rk_s - yk_s
-    iek_s = ek_s + iek_s_1
-    upi_s = kp_s*ek_s + ki_s*(ek_s + iek_s_1)
+        #Control esclavo
+        rk_s = upi_m
+        yk_s = W
+        ek_s= rk_s - yk_s
+        iek_s = ek_s + iek_s_1
+        upi_s = kp_s*ek_s + ki_s*(ek_s + iek_s_1)
 
-    motor1_speed= upi_s
-    control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
+        motor1_speed= upi_s
+        control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
 
-    # Calcular RPM para el motor 1
-    flancos_totales_1 = numero_flancos_A + numero_flancos_B
-    RPS = flancos_totales_1 / (600.0)
-    W = RPS * ((2 * pi_m) / INTERVALO)
+        # Calcular RPM para el motor 1
+        flancos_totales_1 = numero_flancos_A + numero_flancos_B
+        RPS = flancos_totales_1 / (600.0)
+        W = RPS * ((2 * pi_m) / INTERVALO)
 
-    #Medicion flujo 
+        #Medicion flujo 
 
-    delta_W = W - setpoint_W
-    fm_n= fm_n - setpoint_W
-    fm_n= 0.1969*W_1 + 1.359 * fm_n_1 - 0.581*fm_n_2 
-    fm_n_2 = fm_n_1
-    fm_n_1 = fm_n
-    W_1 = delta_W
+        delta_W = W - setpoint_W
+        fm_n= fm_n - setpoint_W
+        fm_n= 0.1969*W_1 + 1.359 * fm_n_1 - 0.581*fm_n_2 
+        fm_n_2 = fm_n_1
+        fm_n_1 = fm_n
+        W_1 = delta_W
 
-    fm_n= fm_n + setpoint_f
-    
+        fm_n= fm_n + setpoint_f
+        
 
-    iek_s_1 = iek_s
-    iek_m_1 = iek_m
+        iek_s_1 = iek_s
+        iek_m_1 = iek_m
 
-    # Restablecer contadores
-    numero_flancos_A = 0
-    numero_flancos_B = 0
-    numero_flancos_A2 = 0
-    numero_flancos_B2 = 0
+        # Registrar los datos en el archivo
+        ts = time.time() - start_time
+        output_file.write(f"{ts:.2f}\t{upi_s:.2f}\t{W:.2f}\t{fm_n:.2f}")
 
-    e_time= t1.tocvalue()
-    toc= abs(e_time)
-    time.sleep(toc)
-    print("tiempo transcurrido =" + toc)
-    
+
+        # Restablecer contadores
+        numero_flancos_A = 0
+        numero_flancos_B = 0
+        numero_flancos_A2 = 0
+        numero_flancos_B2 = 0
+
+        e_time= t1.tocvalue()
+        print(e_time)
+        toc= abs(INTERVALO- e_time)
+        print(toc)
+        time.sleep(toc)
+        print("tiempo transcurrido =" + toc)
+        
     
 # Deshabilitar motores
 pi.set_PWM_dutycycle(motor1_pwm_pin, 0)
