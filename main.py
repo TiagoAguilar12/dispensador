@@ -107,7 +107,7 @@ def main():
         start_time = time.time()
         
         # Bucle principal
-        while time.time() - start_time <= 100:  # Ejecutar durante 40 segundos
+        while time.time() - start_time <= 30:  # Ejecutar durante 40 segundos
             tiempo_actual = time.time()
             tiempo_actual2 = time.time()
 
@@ -119,7 +119,7 @@ def main():
             motor2_speed = int(line2)
             
             # Controlar los motores con las velocidades especificadas
-            control_motor(motor1_pwm_pin, motor1_dir_pin, 100, 'forward')
+            control_motor(motor1_pwm_pin, motor1_dir_pin, 50, 'forward')
             control_motor(motor2_pwm_pin, motor2_dir_pin, 100, 'forward')
             #
             # Avanzar en las líneas circularmente
