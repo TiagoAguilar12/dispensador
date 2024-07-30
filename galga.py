@@ -173,7 +173,7 @@ while(time.time()-start_time <= 20):
     uk = -uik-float(ux_k[0]) #Accion de Control
     motor1_speed = uk
 
-    print("uk = " + uk)
+    print("uk = " + str(uk))
 
     control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
        
@@ -195,7 +195,7 @@ while(time.time()-start_time <= 20):
     numero_flancos_B2 = 0
 
     
-    print("Flujo = "+ fk)
+    print("Flujo = "+ str(fk))
 
     e_time = t1.tocvalue()
     toc = abs(T-e_time)         #Toc
