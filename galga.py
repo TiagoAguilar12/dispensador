@@ -102,7 +102,7 @@ L = np.array([[-0.001633156413536],
               [0.002212041259930],
               [-0.000008608682074]])
 
-Ao = (A-np.matmul(L,C))
+Ao = (A-L@C)
 Bo = np.array([[-0.000419785220888, -0.001633156413536],
               [-0.006447149525435, 0.000304322683582],
               [-0.003587244670196, 0.002212041259930],
@@ -162,14 +162,14 @@ while(time.time()-start_time <= 20):
     uo = np.array([[uk],
                    [fk]])
     
-    xk1 = np.matmul(Ao,xk) + np.matmul(Bo,uo)
+    xk1 = Ao@xk + Bo@uo
     ##
 
     ## Controlador
     ek = rk - fk 
     ek_int = ek_1 + ek_int_1
     uik = ek_int*Ki
-    ux_k= np.matmult(K,xk)
+    ux_k=K@xk
     uk = -uik-float(ux_k[0]) #Accion de Control
     motor1_speed = uk
 
