@@ -145,7 +145,8 @@ with open(output_file_path, 'w') as output_file:
 
     while(time.time()-start_time <= 20):
         
-        t1 = TicToc()           # Tic
+        t1 = TicToc()       # Tic
+        t1.tic()
 
         #Lectura de Flancos para medir velocidad
         flancos_totales_1 = numero_flancos_A + numero_flancos_B
