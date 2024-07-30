@@ -125,12 +125,12 @@ delta_f = 0.0
 delta_f_1 = 0.0 
 delta_f_2 = 0.0
 
-xi = np.array([[0],
+xk = np.array([[0],
                [0],
                [0],
                [0]])
 
-xk_stim = np.array([[0], 
+xk1 = np.array([[0], 
                    [0],
                    [0],
                    [0]]) 
@@ -143,55 +143,63 @@ output_file_path = '/home/santiago/Documents/dispensador/dispensador/test_contro
 with open(output_file_path, 'w') as output_file:
     output_file.write("Tiempo \t PWM \t W \tFlujo \n")
 
-    while(time.time()-start_time <= 20):
-        
-        t1 = TicToc()   
-        t1.tic()        # Tic
-        print(t1)
+while(time.time()-start_time <= 20):
+       
+    t1 = TicToc()           # Tic
 
-        ek = rk - fk 
-        ek_int = ek_1 + ek_int_1
-        xik = ek_int*Ki
-        uo = np.array([[uk],
-                        [fk]])
-        xk_stim = Ao@xi + Bo@uo
-        uk = -xik-K@xk_stim
-        motor1_speed = uk
-        # print("uk = "+ uk)
-        control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
-        #Lectura de Flancos para medir velocidad
-        flancos_totales_1 = numero_flancos_A + numero_flancos_B
-        FPS = flancos_totales_1 / (600.0)
-        W = FPS * ((2 * pi_m) / T)      #Velocidad del motor
+    #Lectura de Flancos para medir velocidad
+    flancos_totales_1 = numero_flancos_A + numero_flancos_B
+    FPS = flancos_totales_1 / (600.0)
+    W = FPS * ((2 * pi_m) / T)      #Velocidad del motor
 
-        delta_w = W - set_point_w
-        delta_f = fk - set_point_f
-        delta_f = 0.1969*delta_w_1 + 1.359*delta_f_1 -0.581*delta_f_2
+    # Soft Sensor
+    delta_w = W - set_point_w
+    delta_f = 0.1969*delta_w_1 + 1.359*delta_f_1 -0.581*delta_f_2
+    fk = delta_f + set_point_f
+    ##
 
-        delta_f_2 = delta_f_1
-        delta_f_1 = delta_f
-        xi = xk_stim
-        ek_1 = ek
-        delta_w_1 = delta_w 
+    ##Observador
+    uo = np.array([[uk],
+                   [fk]])
+    
+    xk1 = Ao@xk + Bo@uo
+    ##
 
-        # Registrar los datos en el archivo
-        ts = time.time() - start_time
-        output_file.write(f"{ts:.2f}\t{W:.2f}\t{fk:.2f}")
+    ## Controlador
+    ek = rk - fk 
+    ek_int = ek_1 + ek_int_1
+    uik = ek_int*Ki
+    ux_k=K@xk
+    uk = -uik-float(ux_k[0]) #Accion de Control
+    motor1_speed = uk
 
-        # Restablecer contadores
-        numero_flancos_A = 0
-        numero_flancos_B = 0
-        numero_flancos_A2 = 0
-        numero_flancos_B2 = 0
+    print("uk = " + uk)
 
-        fk = delta_f + set_point_f
-        # print("Flujo = "+ fk)
+    control_motor(motor1_pwm_pin, motor1_dir_pin, motor1_speed, 'forward')
+       
+    delta_f_2 = delta_f_1
+    delta_f_1 = delta_f
+    xk = xk1
+    ek_int_1=ek_int
+    ek_1 = ek
+    delta_w_1 = delta_w 
 
-        e_time= t1.tocvalue()
-        print(e_time)
-        toc= abs(T- e_time)
-        print(toc)
-        time.sleep(toc)
+    # Registrar los datos en el archivo
+    ts = time.time() - start_time
+    output_file.write(f"{ts:.2f}\t{uk:.2f}\t{W:.2f}\t{fk:.2f}\n")
+
+    # Restablecer contadores
+    numero_flancos_A = 0
+    numero_flancos_B = 0
+    numero_flancos_A2 = 0
+    numero_flancos_B2 = 0
+
+    
+    print("Flujo = "+ fk)
+
+    e_time = t1.tocvalue()
+    toc = abs(T-e_time)         #Toc
+    time.sleep(toc)
     
 
 # Deshabilitar motores
